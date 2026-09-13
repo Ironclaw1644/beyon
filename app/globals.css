@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body {
+  min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-brand-cream font-sans text-brand-ink antialiased;
+  background-image:
+    radial-gradient(circle at 8% 6%, rgba(157,170,140,0.18), transparent 38%),
+    radial-gradient(circle at 92% 0%, rgba(168,57,42,0.06), transparent 34%),
+    linear-gradient(to bottom, #fbf8f3, #f7f2ea);
+}
+
+h1, h2, .font-display {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.005em;
+}
+
+::selection {
+  background: rgba(168, 57, 42, 0.18);
+}
+
+a {
+  @apply transition-colors duration-150 ease-out;
+}
+
+:focus-visible {
+  outline: 2px solid #A8392A;
+  outline-offset: 3px;
+}
+
+.container-shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.announcement-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .announcement-clamp {
+    -webkit-line-clamp: 6;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 360ms ease-out,
+    transform 360ms ease-out;
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
