@@ -229,6 +229,7 @@ export async function sendBlastCampaign(input: {
 
   let sentCount = alreadySent.size;
   let skippedCount = 0;
+  let failedCount = 0;
   let lastSendAt = 0;
 
   try {
@@ -267,6 +268,7 @@ export async function sendBlastCampaign(input: {
         await logEmailEvent({ email, type: 'sent', meta: { campaign_id: campaign.id, resend_id: resend.id || null } });
       } catch (error) {
         skippedCount += 1;
+        failedCount += 1;
         const reason = error instanceof Error ? error.message.slice(0, 200) : 'send_failed';
         await recordEmailCampaignRecipient({ campaignId: campaign.id, email, status: 'skipped', reason });
         await logEmailEvent({ email, type: 'send_failed', meta: { campaign_id: campaign.id, reason } });
@@ -283,15 +285,19 @@ export async function sendBlastCampaign(input: {
     throw error;
   }
 
+  // Any failed send leaves the campaign 'failed' so a retry with the same
+  // idempotency key re-attempts the unsent recipients instead of returning
+  // alreadyProcessed for a blast nobody received.
+  const status = failedCount > 0 ? 'failed' : 'sent';
   await finalizeEmailCampaign({
     campaignId: campaign.id,
-    status: 'sent',
+    status,
     totalRecipients: recipients.length,
     sentCount,
     skippedCount
   });
 
-  return { campaign: { ...campaign, status: 'sent', total_recipients: recipients.length, sent_count: sentCount, skipped_count: skippedCount }, alreadyProcessed: false };
+  return { campaign: { ...campaign, status, total_recipients: recipients.length, sent_count: sentCount, skipped_count: skippedCount }, alreadyProcessed: false, failedCount };
 }
 
 function leadTypeLabel(leadType?: string) {

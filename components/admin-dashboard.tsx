@@ -240,6 +240,11 @@ export function AdminDashboard({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to send campaign');
+      if (data.campaign?.status === 'failed') {
+        // Keep the idempotency key: sending again retries only the recipients who did not get it.
+        await fetchCampaigns();
+        throw new Error('Some emails failed to send. Send again to retry the recipients who did not receive it.');
+      }
       setEmailMessage(data.alreadyProcessed ? 'This campaign was already processed.' : 'Campaign sent.');
       setCampaignIdempotencyKey(`${Date.now()}`);
       await fetchCampaigns();
