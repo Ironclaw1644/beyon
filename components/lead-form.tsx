@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useRef, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
-import { buildLeadMessage } from '@/lib/forms';
+import { LEAD_TEXTAREA_MAX, buildLeadMessage } from '@/lib/forms';
 import { trackEvent } from '@/lib/track-client';
 
 export type ExtraField = {
@@ -349,6 +349,7 @@ function Field({
           required={required}
           placeholder={placeholder}
           className={`${classes} min-h-28`}
+          maxLength={LEAD_TEXTAREA_MAX}
           value={String(value || '')}
           onChange={(event) => onChange(name, event.target.value)}
           onBlur={() => onBlur(name)}

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 import { forwardLead, getMissingLeadOpsEnvVars } from '@/lib/leadops';
-import { assertTopLevelLead, parseLeadMeta } from '@/lib/forms';
+import { assertTopLevelLead, leadValidationMessage, parseLeadMeta } from '@/lib/forms';
 import { insertLocalLead, markLeadForwardError, markLeadForwarded } from '@/lib/storage';
 import { sendLeadTransactionalEmails } from '@/lib/email/service';
 import { upsertSubscriberFromLeadOptIn } from '@/lib/subscribers';
@@ -116,6 +117,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, leadId: localLead.id, forwarded, forwardError });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json({ error: leadValidationMessage(error) }, { status: 400 });
+    }
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+    }
     const message = error instanceof Error ? error.message : 'Submission failed';
     return NextResponse.json({ error: message }, { status: 500 });
   }
