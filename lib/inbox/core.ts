@@ -414,7 +414,8 @@ export async function processInboundEmail(
   deps: {
     repo: InboxRepo;
     receiving: ReceivingClient;
-    forwardTo: string;
+    /** Null when the Gmail copy is delivered some other way (e.g. ImprovMX); the message is marked `skipped`. */
+    forwardTo: string | null;
     forwardFrom?: string;
     now?: () => Date;
     /** Runs the forward after the response (e.g. Next `after`); awaited inline when omitted. */
@@ -463,7 +464,7 @@ export async function processInboundEmail(
     text_body: text || null,
     html_body: email.html,
     attachments: toStoredAttachments(email.attachments),
-    forward_status: 'pending',
+    forward_status: deps.forwardTo?.trim() ? 'pending' : 'skipped',
     forward_error: null,
     created_at: receivedAt
   });
@@ -477,16 +478,19 @@ export async function processInboundEmail(
 
   await deps.repo.touchThread(threadId, { last_message_at: receivedAt, snippet, unread: true, archived_at: null });
 
-  const forward = async () => {
-    try {
-      await deps.receiving.forward({ emailId, to: deps.forwardTo, from: deps.forwardFrom ?? INBOX_FROM });
-      await deps.repo.updateMessage(inserted.id, { forward_status: 'forwarded', forward_error: null });
-    } catch (error) {
-      await deps.repo.updateMessage(inserted.id, { forward_status: 'failed', forward_error: errorText(error) }).catch(() => undefined);
-    }
-  };
-  if (deps.defer) deps.defer(forward);
-  else await forward();
+  const forwardTo = deps.forwardTo?.trim();
+  if (forwardTo) {
+    const forward = async () => {
+      try {
+        await deps.receiving.forward({ emailId, to: forwardTo, from: deps.forwardFrom ?? INBOX_FROM });
+        await deps.repo.updateMessage(inserted.id, { forward_status: 'forwarded', forward_error: null });
+      } catch (error) {
+        await deps.repo.updateMessage(inserted.id, { forward_status: 'failed', forward_error: errorText(error) }).catch(() => undefined);
+      }
+    };
+    if (deps.defer) deps.defer(forward);
+    else await forward();
+  }
 
   return { status: 'stored', threadId, messageId: inserted.id, matchedBy: match?.matchedBy ?? 'new' };
 }

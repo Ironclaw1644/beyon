@@ -291,6 +291,15 @@ test('processInboundEmail records a forward failure and still stores the message
   assert.equal([...threads.values()][0].unread, true);
 });
 
+test('processInboundEmail without a forward address stores the message and skips forwarding', async () => {
+  const { repo, messages } = memoryRepo();
+  const { client, calls } = fakeReceiving({ e4: receivedEmail({ id: 'e4' }) });
+  const result = await processInboundEmail('e4', { repo, receiving: client, forwardTo: null, now: clock });
+  assert.equal(result.status, 'stored');
+  assert.equal(calls.forward.length, 0);
+  assert.equal(messages[0].forward_status, 'skipped');
+});
+
 test('matchThread: In-Reply-To/References join the thread even with a new subject', async () => {
   const { repo, threads } = memoryRepo();
   const { client } = fakeReceiving({

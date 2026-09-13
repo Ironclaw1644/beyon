@@ -21,7 +21,10 @@ import {
 type Tables = Database['beyon']['Tables'];
 type InboxThreadRow = Tables['inbox_threads']['Row'];
 
-const INBOX_ENV_VARS = ['RESEND_INBOUND_API_KEY', 'RESEND_INBOUND_WEBHOOK_SECRET', 'FORWARD_INBOUND_TO', 'RESEND_API_KEY'] as const;
+// FORWARD_INBOUND_TO is optional and deliberately not listed: when mail reaches Resend
+// through ImprovMX, ImprovMX already delivers the Gmail copy, and forwarding again
+// would duplicate it.
+const INBOX_ENV_VARS = ['RESEND_INBOUND_API_KEY', 'RESEND_INBOUND_WEBHOOK_SECRET', 'RESEND_API_KEY'] as const;
 type InboxEnvVar = (typeof INBOX_ENV_VARS)[number];
 
 const THREAD_COLUMNS = 'id, subject, participant_email, participant_name, snippet, last_message_at, unread, archived_at';
@@ -151,11 +154,11 @@ function resendReceivingClient(): ReceivingClient {
 }
 
 export async function handleInboundEmail(emailId: string, defer?: (task: () => Promise<void>) => void) {
-  requireInboxEnv(['RESEND_INBOUND_API_KEY', 'FORWARD_INBOUND_TO']);
+  requireInboxEnv(['RESEND_INBOUND_API_KEY']);
   return processInboundEmail(emailId, {
     repo: supabaseInboxRepo(),
     receiving: resendReceivingClient(),
-    forwardTo: inboxEnv('FORWARD_INBOUND_TO'),
+    forwardTo: process.env.FORWARD_INBOUND_TO?.trim() || null,
     forwardFrom: INBOX_FROM,
     defer
   });
