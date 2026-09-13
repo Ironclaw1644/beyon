@@ -66,6 +66,8 @@ How it works:
 
 - The webhook is verified with the Svix signature headers (HMAC-SHA256, 5-minute tolerance). Unsigned or invalid requests get 401.
 - The full message is fetched from the Receiving API and stored. If `FORWARD_INBOUND_TO` is set, it is also forwarded (passthrough) there from `hello@beyonvital.com`; otherwise the message is marked `skipped`. Storage is idempotent on the Resend email id. A failed forward is recorded on the message and the webhook still returns 200.
+- Forwarded mail (ImprovMX → Resend's `…@<id>.resend.app` address): the participant is the original `From`. The recipient shown is the @beyonvital.com address from the original `To`/`Cc`, then `Delivered-To`/`X-Original-To`, else hello@. The resend.app hop is never stored. Threading uses the original `Message-ID` header.
+- Mail from an @beyonvital.com address whose subject matches something we sent in the last 3 days is treated as an echo and dropped. Bounces (MAILER-DAEMON/postmaster) and auto-replies (`Auto-Submitted`, `X-Autoreply`, `Precedence: auto_reply`) are stored but never mark a conversation unread.
 - Thread matching: a message joins the thread whose stored Message-ID appears in its `In-Reply-To`/`References`; otherwise the newest thread with the same sender and the same subject (ignoring `Re:`/`Fwd:`) active in the last 30 days; otherwise a new thread.
 - Attachments: only metadata is stored. Downloads go through `/api/admin/inbox/attachment`, which redirects to a fresh short-lived Resend URL.
 - Received HTML is sanitized on the server (`sanitize-html`) and shown in a sandboxed iframe with a no-script CSP. Remote images are hidden until "Show images" is clicked.

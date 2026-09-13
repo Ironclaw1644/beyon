@@ -113,6 +113,16 @@ function supabaseInboxRepo(): InboxRepo {
       assertNoError(error);
       return { id: data!.id };
     },
+    async findRecentOutboundSubjects(sinceIso) {
+      const { data, error } = await db
+        .from('inbox_messages')
+        .select('subject')
+        .eq('direction', 'out')
+        .gte('created_at', sinceIso)
+        .limit(500);
+      assertNoError(error);
+      return (data ?? []).map((row) => row.subject);
+    },
     async touchThread(id, patch) {
       const { error } = await db.from('inbox_threads').update(patch).eq('id', id);
       assertNoError(error);

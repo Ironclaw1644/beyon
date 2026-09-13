@@ -439,7 +439,7 @@ export function AdminInbox({ onUnreadCount }: { onUnreadCount?: (count: number) 
                         <div className="min-w-0 text-sm">
                           <span className="font-semibold text-brand-ink">{outbound ? 'You' : message.from_name || message.from_email}</span>
                           <span className="block break-all text-xs text-brand-muted">
-                            {outbound ? `to ${message.to_emails.join(', ')}` : message.from_email}
+                            {outbound ? `to ${message.to_emails.join(', ')}` : `${message.from_email} → ${message.to_emails.join(', ') || 'hello@beyonvital.com'}`}
                             {message.cc_emails.length ? ` • cc ${message.cc_emails.join(', ')}` : ''}
                           </span>
                         </div>

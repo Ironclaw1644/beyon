@@ -189,6 +189,9 @@ function memoryRepo() {
       messages.push({ ...row, id });
       return { id };
     },
+    async findRecentOutboundSubjects(sinceIso) {
+      return messages.filter((message) => message.direction === 'out' && message.created_at >= sinceIso).map((message) => message.subject);
+    },
     async touchThread(id, patch) {
       Object.assign(threads.get(id) as MemoryThread, patch);
     },
@@ -300,6 +303,98 @@ test('processInboundEmail without a forward address stores the message and skips
   assert.equal(messages[0].forward_status, 'skipped');
 });
 
+test('forwarded message (resend.app envelope, original To hello@) lands with the real sender and recipient', async () => {
+  const { repo, threads, messages } = memoryRepo();
+  const { client, calls } = fakeReceiving({
+    f1: receivedEmail({
+      id: 'f1',
+      from: '"Jordan Rivera" <jordan@example.com>',
+      to: ['beyon-inbox@abc123.resend.app'],
+      message_id: '<forwarder-hop@improvmx.com>',
+      headers: {
+        To: 'Beyon Vital <hello@beyonvital.com>, beyon-inbox@abc123.resend.app',
+        Cc: 'tours@beyonvital.com',
+        'Message-ID': '<original-1@mail.example.com>',
+        'Delivered-To': 'beyon-inbox@abc123.resend.app'
+      }
+    }),
+    f2: receivedEmail({
+      id: 'f2',
+      from: 'someone@example.org',
+      to: ['beyon-inbox@abc123.resend.app'],
+      headers: { To: 'beyon-inbox@abc123.resend.app', 'X-Original-To': 'info@beyonvital.com' }
+    })
+  });
+  const deps = { repo, receiving: client, forwardTo: null, now: clock };
+  const first = await processInboundEmail('f1', deps);
+  await processInboundEmail('f2', deps);
+
+  if (first.status !== 'stored') throw new Error(`expected stored, got ${first.status}`);
+  const thread = threads.get(first.threadId) as MemoryThread;
+  assert.equal(thread.participant_email, 'jordan@example.com');
+  assert.equal(thread.participant_name, 'Jordan Rivera');
+  assert.deepEqual(messages[0].to_emails, ['hello@beyonvital.com']);
+  assert.deepEqual(messages[0].cc_emails, ['tours@beyonvital.com']);
+  assert.equal(messages[0].message_id, '<original-1@mail.example.com>', 'original Message-ID header, not the forwarder hop');
+  assert.deepEqual(messages[1].to_emails, ['info@beyonvital.com']);
+  assert.ok(!JSON.stringify(messages).includes('resend.app'), 'forwarder address never stored');
+  assert.equal(calls.forward.length, 0, 'FORWARD_INBOUND_TO unset → no forward call');
+  assert.equal(messages[0].forward_status, 'skipped');
+
+  const reply = buildReplyHeaders(messages.filter((message) => message.thread_id === first.threadId));
+  assert.equal(reply.inReplyTo, '<original-1@mail.example.com>', 'replies thread on the original Message-ID');
+});
+
+test('echo of our own outbound mail is dropped; unrelated mail from our domain is kept', async () => {
+  const { repo, messages } = memoryRepo();
+  messages.push({
+    id: 'out-1',
+    thread_id: 'thread-x',
+    direction: 'out',
+    resend_email_id: 'sent-1',
+    message_id: null,
+    in_reply_to: null,
+    references: null,
+    from_email: 'hello@beyonvital.com',
+    from_name: 'Beyon Vital',
+    to_emails: ['pat@example.com'],
+    cc_emails: ['hello@beyonvital.com'],
+    subject: 'Re: Question about a tour',
+    text_body: 'See you Tuesday',
+    html_body: null,
+    attachments: [],
+    forward_status: null,
+    forward_error: null,
+    created_at: '2026-09-13T11:00:00.000Z'
+  });
+  const { client, calls } = fakeReceiving({
+    echo: receivedEmail({ id: 'echo', from: 'Beyon Vital <hello@beyonvital.com>', subject: 'Re: Question about a tour' }),
+    own: receivedEmail({ id: 'own', from: 'hello@beyonvital.com', subject: 'Staff schedule' })
+  });
+  const deps = { repo, receiving: client, forwardTo: 'client-inbox@example.com', now: clock };
+  assert.deepEqual(await processInboundEmail('echo', deps), { status: 'ignored', reason: 'echo' });
+  assert.equal((await processInboundEmail('own', deps)).status, 'stored');
+  assert.equal(messages.filter((message) => message.direction === 'in').length, 1);
+  assert.equal(calls.forward.length, 1, 'the echo is not forwarded');
+});
+
+test('bounces and auto-replies are stored but do not mark the conversation unread', async () => {
+  const { repo, threads, messages } = memoryRepo();
+  const { client } = fakeReceiving({
+    bounce: receivedEmail({ id: 'bounce', from: 'Mail Delivery System <MAILER-DAEMON@mx.example.com>', subject: 'Undelivered Mail Returned to Sender' }),
+    ooo: receivedEmail({ id: 'ooo', from: 'pat@example.com', subject: 'Out of office', headers: { 'Auto-Submitted': 'auto-replied' } }),
+    human: receivedEmail({ id: 'human', from: 'pat@example.com', subject: 'Real question', headers: { 'Auto-Submitted': 'no' } })
+  });
+  const deps = { repo, receiving: client, forwardTo: null, now: clock };
+  const bounce = await processInboundEmail('bounce', deps);
+  const ooo = await processInboundEmail('ooo', deps);
+  const human = await processInboundEmail('human', deps);
+  assert.equal(messages.length, 3);
+  assert.equal(bounce.status === 'stored' && (threads.get(bounce.threadId) as MemoryThread).unread, false);
+  assert.equal(ooo.status === 'stored' && (threads.get(ooo.threadId) as MemoryThread).unread, false);
+  assert.equal(human.status === 'stored' && (threads.get(human.threadId) as MemoryThread).unread, true);
+});
+
 test('matchThread: In-Reply-To/References join the thread even with a new subject', async () => {
   const { repo, threads } = memoryRepo();
   const { client } = fakeReceiving({
@@ -314,9 +409,9 @@ test('matchThread: In-Reply-To/References join the thread even with a new subjec
   const deps = { repo, receiving: client, forwardTo: FORWARD_TO, now: clock };
   const first = await processInboundEmail('a', deps);
   const second = await processInboundEmail('b', deps);
-  assert.equal(second.status, 'stored');
+  if (first.status !== 'stored' || second.status !== 'stored') throw new Error('expected both messages stored');
   assert.equal(second.threadId, first.threadId);
-  assert.equal(second.status === 'stored' && second.matchedBy, 'headers');
+  assert.equal(second.matchedBy, 'headers');
   assert.equal(threads.size, 1);
 });
 

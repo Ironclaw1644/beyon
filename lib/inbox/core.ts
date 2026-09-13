@@ -148,6 +148,60 @@ export function getHeader(headers: Record<string, unknown> | null | undefined, n
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Forwarded mail (ImprovMX → Resend managed receiving address)
+// ---------------------------------------------------------------------------
+
+export const OWN_DOMAIN = 'beyonvital.com';
+
+export function isOwnDomainAddress(email: string | null | undefined) {
+  return String(email ?? '').trim().toLowerCase().endsWith(`@${OWN_DOMAIN}`);
+}
+
+/** Resend's managed receiving address (…@<id>.resend.app); never shown to the user. */
+export function isForwarderAddress(email: string | null | undefined) {
+  return /@([a-z0-9-]+\.)*resend\.app$/i.test(String(email ?? '').trim());
+}
+
+/** Every address in a To/Cc style header, lowercased (display names dropped). */
+export function extractAddresses(header: string | null | undefined) {
+  return Array.from(new Set((String(header ?? '').match(/[^\s<>,;"'()]+@[^\s<>,;"'()]+\.[a-z]{2,24}/gi) ?? []).map((item) => item.toLowerCase())));
+}
+
+/**
+ * The recipients the sender actually addressed, read from the original headers the
+ * forwarder preserved. The resend.app hop is removed; if no To survives,
+ * Delivered-To / X-Original-To name the @beyonvital.com address, else hello@.
+ */
+export function originalRecipients(email: Pick<ReceivedEmail, 'to' | 'cc' | 'headers'>) {
+  const visible = (list: string[]) => list.filter((address) => !isForwarderAddress(address));
+  let to = visible(extractAddresses(getHeader(email.headers, 'to')));
+  if (!to.length) to = visible((email.to ?? []).flatMap((item) => extractAddresses(item)));
+  if (!to.some(isOwnDomainAddress)) {
+    const delivered = visible([
+      ...extractAddresses(getHeader(email.headers, 'delivered-to')),
+      ...extractAddresses(getHeader(email.headers, 'x-original-to'))
+    ]).filter(isOwnDomainAddress);
+    to = Array.from(new Set([...to, ...delivered]));
+  }
+  if (!to.length) to = [INBOX_ADDRESS];
+  let cc = visible(extractAddresses(getHeader(email.headers, 'cc')));
+  if (!cc.length) cc = visible((email.cc ?? []).flatMap((item) => extractAddresses(item)));
+  return { to, cc: cc.filter((address) => !to.includes(address)) };
+}
+
+/** Bounces and auto-replies: stored, but they never mark a conversation unread. */
+export function isAutomatedEmail(fromEmail: string, headers: Record<string, unknown> | null | undefined) {
+  const local = fromEmail.split('@')[0]?.toLowerCase() ?? '';
+  if (local === 'mailer-daemon' || local === 'postmaster') return true;
+  const autoSubmitted = getHeader(headers, 'auto-submitted')?.trim().toLowerCase();
+  if (autoSubmitted && autoSubmitted !== 'no') return true;
+  if (getHeader(headers, 'x-autoreply') || getHeader(headers, 'x-autorespond')) return true;
+  return getHeader(headers, 'precedence')?.trim().toLowerCase() === 'auto_reply';
+}
+
+export const ECHO_WINDOW_DAYS = 3;
+
 const MAX_REFERENCES = 20;
 
 export type ThreadHeaderSource = {
@@ -350,7 +404,9 @@ export interface InboxRepo extends ThreadLookup {
   deleteThread(id: string): Promise<void>;
   /** Must report `{ duplicate: true }` when resend_email_id already exists. */
   insertMessage(row: InboxMessageInsert): Promise<{ id: string } | { duplicate: true }>;
-  touchThread(id: string, patch: { last_message_at: string; snippet: string; unread: boolean; archived_at: null }): Promise<void>;
+  /** Subjects of outbound messages sent since the given time (for echo suppression). */
+  findRecentOutboundSubjects(sinceIso: string): Promise<string[]>;
+  touchThread(id: string, patch: { last_message_at: string; snippet: string; unread?: boolean; archived_at?: null }): Promise<void>;
   updateMessage(id: string, patch: { forward_status: ForwardStatus; forward_error: string | null }): Promise<void>;
 }
 
@@ -361,6 +417,7 @@ export interface ReceivingClient {
 
 export type InboundResult =
   | { status: 'duplicate'; threadId: string }
+  | { status: 'ignored'; reason: 'echo' }
   | { status: 'stored'; threadId: string; messageId: string; matchedBy: 'headers' | 'subject' | 'new' };
 
 export function toStoredAttachments(list: ReceivedEmail['attachments'] | null | undefined): StoredAttachment[] {
@@ -434,6 +491,16 @@ export async function processInboundEmail(
   const snippet = makeSnippet(stripQuotedReply(text));
   const receivedAt = validIso(email.created_at) ?? now.toISOString();
   const subject = String(email.subject ?? '').trim();
+  const recipients = originalRecipients(email);
+  const automated = isAutomatedEmail(sender.email, email.headers);
+
+  // A copy of our own outbound mail (e.g. someone cc'd hello@) comes back through
+  // the forwarder: drop it instead of stacking a duplicate in the thread.
+  if (isOwnDomainAddress(sender.email)) {
+    const since = new Date(now.getTime() - ECHO_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    const sent = await deps.repo.findRecentOutboundSubjects(since);
+    if (sent.some((item) => normalizeSubject(item) === normalizeSubject(subject))) return { status: 'ignored', reason: 'echo' };
+  }
 
   const match = await matchThread({ fromEmail: sender.email, subject, inReplyTo, references, now }, deps.repo);
   const threadId =
@@ -445,7 +512,7 @@ export async function processInboundEmail(
         participant_name: sender.name,
         snippet,
         last_message_at: receivedAt,
-        unread: true
+        unread: !automated
       })
     ).id;
 
@@ -453,13 +520,14 @@ export async function processInboundEmail(
     thread_id: threadId,
     direction: 'in',
     resend_email_id: emailId,
-    message_id: normalizeMessageId(email.message_id ?? getHeader(email.headers, 'message-id')),
+    // The original header wins: behind a forwarder the API's message_id can be the forwarder's.
+    message_id: normalizeMessageId(getHeader(email.headers, 'message-id') || email.message_id),
     in_reply_to: inReplyTo,
     references,
     from_email: sender.email,
     from_name: sender.name,
-    to_emails: (email.to ?? []).map((item) => parseMailbox(item)?.email ?? item),
-    cc_emails: (email.cc ?? []).map((item) => parseMailbox(item)?.email ?? item),
+    to_emails: recipients.to,
+    cc_emails: recipients.cc,
     subject,
     text_body: text || null,
     html_body: email.html,
@@ -476,7 +544,10 @@ export async function processInboundEmail(
     return { status: 'duplicate', threadId: winner?.thread_id ?? threadId };
   }
 
-  await deps.repo.touchThread(threadId, { last_message_at: receivedAt, snippet, unread: true, archived_at: null });
+  await deps.repo.touchThread(
+    threadId,
+    automated ? { last_message_at: receivedAt, snippet } : { last_message_at: receivedAt, snippet, unread: true, archived_at: null }
+  );
 
   const forwardTo = deps.forwardTo?.trim();
   if (forwardTo) {
