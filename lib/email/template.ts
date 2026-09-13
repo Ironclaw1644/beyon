@@ -204,6 +204,47 @@ export function renderMarketingEmail(input: {
   return { html, text };
 }
 
+/** Double opt-in confirmation. Transactional: no unsubscribe link, no user-supplied text. */
+export function renderSubscribeConfirmEmail(input: { confirmUrl: string }): RenderedEmail {
+  const title = 'Confirm your subscription';
+  const intro = `Please confirm that you would like to receive news, community engagement updates and announcements from ${business.name} by email.`;
+  const expiry = 'This link expires in 7 days.';
+  const ignore = "If you didn't sign up, you can ignore this email. You won't be subscribed and we won't email you again.";
+  const footerNote = `You are receiving this one-time email because this address was entered in the newsletter sign-up form at ${siteLabel()}.`;
+  const small = `margin:0 0 12px 0;font-family:${SANS};font-size:13px;line-height:20px;color:${C.muted};word-break:break-word;`;
+
+  const html = renderEmailShell({
+    title,
+    previewText: 'One click to confirm your Beyon Vital email updates.',
+    contentHtml: `<p style="margin:0 0 16px 0;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">Hello,</p>
+            <p style="margin:0 0 16px 0;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${escapeHtml(intro)}</p>
+            ${renderButtons([{ label: 'Confirm subscription', href: input.confirmUrl }])}
+            <p style="${small}margin-top:12px;">${escapeHtml(expiry)} If the button doesn't work, copy this link into your browser:<br /><a href="${escapeHtml(
+              input.confirmUrl
+            )}" style="color:${C.red};text-decoration:underline;">${escapeHtml(input.confirmUrl)}</a></p>
+            <p style="${small}">${escapeHtml(ignore)}</p>`,
+    footerNote
+  });
+
+  const text = [
+    title,
+    '',
+    'Hello,',
+    '',
+    intro,
+    '',
+    `Confirm your subscription: ${input.confirmUrl}`,
+    '',
+    expiry,
+    '',
+    ignore,
+    '',
+    textFooter(undefined, footerNote)
+  ].join('\n');
+
+  return { html, text };
+}
+
 export function renderLeadResponseEmail(input: {
   title: string;
   intro: string;

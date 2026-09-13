@@ -20,7 +20,7 @@ import {
 } from '@/lib/storage';
 import { createEmailToken } from '@/lib/email/tokens';
 import { sendResendEmail, sleep } from '@/lib/email/resend';
-import { renderLeadResponseEmail, renderMarketingEmail } from '@/lib/email/template';
+import { renderLeadResponseEmail, renderMarketingEmail, renderSubscribeConfirmEmail } from '@/lib/email/template';
 import { parseLeadMeta, stripMetaBlock } from '@/lib/forms';
 import { formatEmailDateTime } from '@/lib/email/format';
 
@@ -187,6 +187,18 @@ export async function buildLeadDetailEmailDraft(input: {
   });
 
   return { lead, subject, html: rendered.html, text: rendered.text };
+}
+
+export async function sendNewsletterConfirmEmail(input: { email: string; confirmUrl: string; idempotencyKey: string }) {
+  const { html, text } = renderSubscribeConfirmEmail({ confirmUrl: input.confirmUrl });
+  return sendResendEmail({
+    to: input.email,
+    subject: 'Confirm your subscription to Beyon Vital updates',
+    html,
+    text,
+    replyTo: replyToRecipient(),
+    idempotencyKey: input.idempotencyKey
+  });
 }
 
 export async function sendTestBlastEmail(input: { subject: string; previewText?: string; body: string }) {

@@ -3,6 +3,7 @@
 import { Suspense, useMemo, useRef, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
+import { HoneypotField, useFormGuard } from '@/components/honeypot-field';
 import { LEAD_TEXTAREA_MAX, buildLeadMessage } from '@/lib/forms';
 import { trackEvent } from '@/lib/track-client';
 
@@ -65,6 +66,7 @@ function LeadFormInner({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const statusRef = useRef<HTMLDivElement | null>(null);
+  const { honeypotRef, guardFields } = useFormGuard();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -216,6 +218,7 @@ function LeadFormInner({
       page_path: pathname || undefined,
       referrer: typeof document !== 'undefined' ? document.referrer || undefined : undefined,
       ...utmMeta,
+      ...guardFields(),
       message: buildLeadMessage(
         [
           `Lead Type: ${summaryLeadLabel || leadType}`,
@@ -255,6 +258,7 @@ function LeadFormInner({
         {description ? <p className="mt-2 text-sm leading-7 text-brand-muted">{description}</p> : null}
       </div>
       <form noValidate onSubmit={handleSubmit} className="space-y-4">
+        <HoneypotField inputRef={honeypotRef} />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             name="contact_name"

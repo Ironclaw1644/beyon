@@ -81,7 +81,19 @@ Photo alt text describes what is visible in each picture (for example "queen bed
 | --- | --- | --- |
 | Tours can be requested ("we will follow up to schedule") | `/tour`, header and footer CTAs, home hero | The brief kept the tour flow from the source codebase. The client has not said they offer tours. |
 | "We will follow up at your preferred contact time" | Inquiry forms and success pages | Describes the form workflow |
-| Optional email updates opt-in | Inquiry, tour, and contact forms | Feeds the subscriber list used by admin email blasts |
+| Optional email updates opt-in | Inquiry, tour, and contact forms | Feeds the subscriber list used by admin email blasts. Single opt-in (the person is already contacting us); stored with `consent_source = inquiry_form_checkbox:<form>` |
+| Newsletter headline "Get updates from Beyon Vital" | Floating card (desktop), bottom sheet (mobile), band above the footer | Describes the sign-up, not the business |
+| Newsletter copy "News, community engagement updates and announcements from Beyon Vital, LLC." | Same, confirmation email, `/newsletter/confirm` | Names content types only. Makes no promise of frequency, offers, or health information. Community Engagement is sourced above (Text B) |
+| "We’ll email you a link to confirm. Unsubscribe anytime." | Under every newsletter form | Describes the double opt-in flow below. Every blast carries an unsubscribe link and RFC 8058 one-click headers (`lib/email/service.ts`) |
+| "This link expires in 7 days." | Confirmation email, expired-link page | `CONFIRM_TOKEN_TTL_MS` in `lib/subscribers.ts` |
+
+## Newsletter consent flow
+
+1. The visitor submits `POST /api/subscribe` (email, optional first name). The endpoint checks a honeypot, a 3-second minimum time on the form, and a per-IP rate limit, then normalizes and validates the email.
+2. The subscriber row is created or kept as `pending`, with a random confirm token. Only its SHA-256 hash and a 7-day expiry are stored. One short transactional "Confirm your subscription" email is sent (HTML plus text, no user-supplied text). Pending addresses get at most one email per 10 minutes.
+3. `GET /newsletter/confirm?token=…` (noindex) sets `status = active`, `confirmed_at`, `consent_at`, and `consent_source = double_opt_in:newsletter_<widget|sheet|footer>`.
+4. The response is identical for new, pending, already-active, and suppressed addresses, so the form never reveals who is on the list. Bounced and complaint addresses are never mailed. An unsubscribe that happens after a link was issued overrides that link.
+5. Blasts go only to `status = active`, non-archived subscribers (`listSubscribersForBlast`). Pending, unsubscribed, bounced, and complaint rows are excluded.
 | "Please do not include medical details…" | Every form, Resources, FAQ | Privacy policy for a non-HIPAA stack, not a claim about care |
 
 ## AI-generated lifestyle images

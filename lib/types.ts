@@ -26,7 +26,10 @@ export type Subscriber = {
   phone?: string;
   source: string;
   opted_in: boolean;
-  status: 'active' | 'unsubscribed' | 'bounced' | 'complaint';
+  status: 'pending' | 'active' | 'unsubscribed' | 'bounced' | 'complaint';
+  confirmed_at?: string;
+  consent_source?: string;
+  consent_at?: string;
   unsubscribed_at?: string;
   bounced_at?: string;
   complaint_at?: string;

@@ -5,6 +5,7 @@ import { assertTopLevelLead, leadValidationMessage, parseLeadMeta } from '@/lib/
 import { insertLocalLead, markLeadForwardError, markLeadForwarded } from '@/lib/storage';
 import { sendLeadTransactionalEmails } from '@/lib/email/service';
 import { upsertSubscriberFromLeadOptIn } from '@/lib/subscribers';
+import { checkFormGuard, isRateLimited } from '@/lib/form-guard';
 
 function parseReferer(input?: string | null) {
   if (!input) return { referrer: undefined as string | undefined, pagePath: undefined as string | undefined, search: new URLSearchParams() };
@@ -26,7 +27,21 @@ function detectDevice(userAgent: string) {
 export async function POST(req: Request) {
   try {
     const json = (await req.json()) as Record<string, unknown>;
+    if (!json || typeof json !== 'object' || Array.isArray(json)) {
+      return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+    }
+
+    const guard = checkFormGuard(json);
+    // Bots get a success-shaped answer and nothing is stored or emailed.
+    if (guard.result === 'bot') return NextResponse.json({ ok: true, leadId: null, forwarded: false, forwardError: null });
+    if (guard.result === 'reject') return NextResponse.json({ error: guard.error }, { status: 400 });
+
     const payload = assertTopLevelLead(json);
+
+    if (await isRateLimited(req, 'submit', { limit: 5, windowSeconds: 10 * 60 })) {
+      return NextResponse.json({ error: 'Too many submissions. Please try again in a few minutes, or call us.' }, { status: 429 });
+    }
+
     const meta = parseLeadMeta(payload.message) || {};
     const referer = parseReferer(req.headers.get('referer'));
     const clientPagePath = typeof json.page_path === 'string' ? json.page_path : undefined;

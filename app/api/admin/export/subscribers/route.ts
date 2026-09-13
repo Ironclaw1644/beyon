@@ -10,7 +10,7 @@ export async function GET() {
   const unauthorized = await requireAdminApi();
   if (unauthorized) return unauthorized;
   const subscribers = await dbGet('subscribers');
-  const headers = ['id', 'email', 'name', 'source', 'status', 'opted_in', 'unsubscribe_reason', 'unsubscribed_at', 'bounced_at', 'complaint_at', 'created_at'];
+  const headers = ['id', 'email', 'name', 'source', 'status', 'opted_in', 'confirmed_at', 'consent_source', 'consent_at', 'unsubscribe_reason', 'unsubscribed_at', 'bounced_at', 'complaint_at', 'created_at'];
   const rows = [headers.join(',')].concat(subscribers.map((s) => headers.map((h) => csvEscape((s as Record<string, unknown>)[h])).join(',')));
   return new Response(rows.join('\n'), {
     headers: {

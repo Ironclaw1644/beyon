@@ -1042,7 +1042,12 @@ export function AdminDashboard({
                   <div key={subscriber.id} className="rounded-xl border border-brand-ink/10 p-3 text-sm">
                     <p className="font-semibold">{subscriber.email}</p>
                     <p className="text-xs text-brand-muted">
-                      {subscriber.name || 'No name'} • {subscriber.source} • {subscriber.status} • {subscriber.created_at.slice(0, 10)}
+                      {subscriber.name || 'No name'} • {subscriber.source} • {subscriber.created_at.slice(0, 10)}
+                    </p>
+                    <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-brand-muted">
+                      <SubscriberStatusBadge status={subscriber.status} />
+                      <span>Confirmed {subscriber.confirmed_at ? subscriber.confirmed_at.slice(0, 10) : '—'}</span>
+                      {subscriber.consent_source ? <span>consent: {subscriber.consent_source}</span> : null}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {subscriberListMode === 'active' ? (
@@ -1080,6 +1085,7 @@ export function AdminDashboard({
                       <th className="px-2 py-2">Name</th>
                       <th className="px-2 py-2">Source</th>
                       <th className="px-2 py-2">Status</th>
+                      <th className="px-2 py-2">Confirmed</th>
                       <th className="px-2 py-2">Date</th>
                       <th className="px-2 py-2">Action</th>
                     </tr>
@@ -1089,8 +1095,12 @@ export function AdminDashboard({
                       <tr key={subscriber.id} className="border-t">
                         <td className="px-2 py-2">{subscriber.email}</td>
                         <td className="px-2 py-2">{subscriber.name || ''}</td>
-                        <td className="px-2 py-2">{subscriber.source}</td>
-                        <td className="px-2 py-2">{subscriber.status}</td>
+                        <td className="px-2 py-2">
+                          {subscriber.source}
+                          {subscriber.consent_source ? <span className="block text-xs text-brand-muted">consent: {subscriber.consent_source}</span> : null}
+                        </td>
+                        <td className="px-2 py-2"><SubscriberStatusBadge status={subscriber.status} /></td>
+                        <td className="px-2 py-2">{subscriber.confirmed_at ? subscriber.confirmed_at.slice(0, 10) : '—'}</td>
                         <td className="px-2 py-2">{subscriber.created_at.slice(0, 10)}</td>
                         <td className="px-2 py-2">
                           {subscriberListMode === 'active' ? (
@@ -1448,4 +1458,14 @@ function PercentRow({ label, value }: { label: string; value: number }) {
       </div>
     </div>
   );
+}
+
+function SubscriberStatusBadge({ status }: { status: Subscriber['status'] }) {
+  const tone =
+    status === 'active'
+      ? 'bg-emerald-50 text-emerald-800'
+      : status === 'pending'
+        ? 'bg-amber-50 text-amber-800'
+        : 'bg-rose-50 text-rose-800';
+  return <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${tone}`}>{status}</span>;
 }

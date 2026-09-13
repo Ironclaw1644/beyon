@@ -49,6 +49,9 @@ function mapSubscriber(row: CmsTables['subscribers']['Row']): Subscriber {
     source: row.source,
     opted_in: status === 'active',
     status,
+    confirmed_at: row.confirmed_at || undefined,
+    consent_source: row.consent_source || undefined,
+    consent_at: row.consent_at || undefined,
     unsubscribed_at: row.unsubscribed_at || undefined,
     bounced_at: row.bounced_at || undefined,
     complaint_at: row.complaint_at || undefined,
@@ -215,6 +218,8 @@ export async function upsertSubscriber(input: {
   status?: Subscriber['status'];
   forceResubscribe?: boolean;
   unsubscribe_reason?: string;
+  /** Recorded (with a timestamp) when this call moves the subscriber into 'active'. */
+  consent_source?: string;
 }) {
   const supabase = cmsServerClient();
   const email = input.email.trim().toLowerCase();
@@ -263,6 +268,10 @@ export async function upsertSubscriber(input: {
     created_at: createdAt,
     updated_at: now
   };
+  if (input.consent_source && nextStatus === 'active' && existingStatus !== 'active') {
+    row.consent_source = input.consent_source;
+    row.consent_at = now;
+  }
 
   const { data, error } = await supabase.from('subscribers').upsert(row, { onConflict: 'email' }).select('*').single();
   assertNoError(error);
@@ -566,14 +575,18 @@ export async function logEmailEvent(input: { email: string; type: string; meta?:
   assertNoError(error);
 }
 
+/** Blast audience: confirmed/active subscribers only. Pending (unconfirmed) and suppressed rows never qualify. */
 export async function listSubscribersForBlast(source?: string) {
   const supabase = cmsServerClient();
   let query = supabase
     .from('subscribers')
     .select('*')
+    .eq('status', 'active')
     .is('archived_at', null)
     .order('created_at', { ascending: false });
-  if (source) query = query.eq('source', source);
+  // 'newsletter' covers every sign-up surface (newsletter_widget, _sheet, _footer).
+  if (source === 'newsletter') query = query.like('source', 'newsletter%');
+  else if (source) query = query.eq('source', source);
   const { data, error } = await query;
   assertNoError(error);
   return ((data as CmsTables['subscribers']['Row'][] | null) || []).map(mapSubscriber);

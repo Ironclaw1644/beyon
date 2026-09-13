@@ -22,7 +22,8 @@ export async function POST(req: Request) {
     source: String(body.source || 'admin'),
     opted_in: body.opted_in !== false,
     status: body.status || (body.opted_in === false ? 'unsubscribed' : 'active'),
-    forceResubscribe: body.force_resubscribe === true
+    forceResubscribe: body.force_resubscribe === true,
+    consent_source: 'admin'
   });
   return NextResponse.json(item);
 }

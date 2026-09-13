@@ -44,6 +44,12 @@ export type Database = {
           unsubscribe_reason: string | null;
           archived_at: string | null;
           archived_by: string | null;
+          confirm_token_hash: string | null;
+          confirm_token_expires_at: string | null;
+          confirm_sent_at: string | null;
+          confirmed_at: string | null;
+          consent_source: string | null;
+          consent_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -95,6 +101,12 @@ export type Database = {
         };
         Insert: Partial<Tables['email_campaign_recipients']['Row']>;
         Update: Partial<Tables['email_campaign_recipients']['Row']>;
+        Relationships: [];
+      };
+      rate_limit_hits: {
+        Row: { id: number; bucket: string; key_hash: string; created_at: string };
+        Insert: Partial<Tables['rate_limit_hits']['Row']> & Pick<Tables['rate_limit_hits']['Row'], 'bucket' | 'key_hash'>;
+        Update: Partial<Tables['rate_limit_hits']['Row']>;
         Relationships: [];
       };
       lead_notes: {

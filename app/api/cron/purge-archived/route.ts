@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { purgeArchivedOlderThan } from '@/lib/storage';
 import { requireAdminApi } from '@/lib/api-auth';
+import { pruneRateLimitHits } from '@/lib/form-guard';
 
 function hasValidCronSecret(req: Request) {
   const expected = process.env.CRON_SECRET?.trim();
@@ -17,6 +18,7 @@ export async function GET(req: Request) {
   }
 
   const result = await purgeArchivedOlderThan(30);
-  return NextResponse.json({ ok: true, ...result });
+  const rateLimitHitsDeleted = await pruneRateLimitHits(24);
+  return NextResponse.json({ ok: true, ...result, rateLimitHitsDeleted });
 }
 
