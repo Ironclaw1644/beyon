@@ -15,7 +15,7 @@ export function PhotoGrid({ photos, sizes = '(max-width: 640px) 100vw, (max-widt
               width={HOME_PHOTO_SIZE.width}
               height={HOME_PHOTO_SIZE.height}
               sizes={sizes}
-              className="aspect-[4/3] w-full object-cover transition duration-200 ease-out motion-safe:group-hover:scale-[1.02]"
+              className="aspect-[3/4] w-full object-cover transition duration-200 ease-out motion-safe:group-hover:scale-[1.02]"
             />
           </div>
         </Reveal>

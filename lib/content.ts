@@ -60,14 +60,14 @@ export const homePhotos = {
 };
 export const HOME_PHOTO_SIZE = { width: 1200, height: 1600 };
 
-// Placeholder slots for illustrative lifestyle images. These never depict
-// Beyon Vital staff or residents and are always captioned "Illustrative image".
+// AI-generated lifestyle images. They don't depict Beyon Vital's actual staff or
+// residents, so alt text describes the scene without naming anyone as staff.
 export const peopleImages = {
-  hero: { src: '/images/people/hero.webp', alt: 'Illustrative image of a caregiver and two adults laughing over a photo album on a living room sofa', width: 1600, height: 1000 },
-  communityOuting: { src: '/images/people/community-outing.webp', alt: 'Illustrative image of three adults shopping for fresh produce at an outdoor farmers market', width: 1200, height: 800 },
-  lifeCoaching: { src: '/images/people/life-coaching.webp', alt: 'Illustrative image of a coach helping a young adult fill in a planner at a table', width: 1200, height: 800 },
-  volunteer: { src: '/images/people/volunteer.webp', alt: 'Illustrative image of three adults planting seedlings together in a community garden', width: 1200, height: 800 },
-  staffCare: { src: '/images/people/staff-care.webp', alt: 'Illustrative image of a caregiver and an adult talking over coffee at a kitchen table', width: 1200, height: 800 }
+  hero: { src: '/images/people/hero.webp', alt: 'A caregiver and two adults laughing over a photo album on a living room sofa', width: 1600, height: 1000 },
+  communityOuting: { src: '/images/people/community-outing.webp', alt: 'Three adults shopping for fresh produce at an outdoor farmers market', width: 1200, height: 800 },
+  lifeCoaching: { src: '/images/people/life-coaching.webp', alt: 'A coach helping a young adult fill in a planner at a table', width: 1200, height: 800 },
+  volunteer: { src: '/images/people/volunteer.webp', alt: 'Three adults planting seedlings together in a community garden', width: 1200, height: 800 },
+  staffCare: { src: '/images/people/staff-care.webp', alt: 'A caregiver and an adult talking over coffee at a kitchen table', width: 1200, height: 800 }
 };
 
 export const requirementsIntro = 'To ensure the comfort of staff and potential residents, you must meet the following criteria:';

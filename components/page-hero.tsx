@@ -35,7 +35,7 @@ export function PageHero({
             {actions ? <div className="mt-6 flex flex-wrap gap-3">{actions}</div> : null}
           </div>
           {image ? (
-            <IllustrativeImage src={image.src} alt={image.alt} priority className="aspect-[4/3]" sizes="(max-width: 1024px) 100vw, 40vw" />
+            <IllustrativeImage src={image.src} alt={image.alt} priority className="aspect-[8/5]" sizes="(max-width: 1024px) 100vw, 40vw" />
           ) : null}
         </div>
       </div>

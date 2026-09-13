@@ -74,7 +74,7 @@ export default async function LocationLandingPage({ params }: { params: Promise<
                   width={HOME_PHOTO_SIZE.width}
                   height={HOME_PHOTO_SIZE.height}
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="aspect-[4/3] w-full rounded-xl object-cover"
+                  className="aspect-[3/4] w-full rounded-xl object-cover"
                 />
                 <figcaption className="mt-2 text-xs text-brand-muted">Our home in North Chesterfield, VA</figcaption>
               </figure>

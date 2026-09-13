@@ -50,7 +50,7 @@ export function OurHomeCarousel({ slides }: { slides: readonly Slide[] }) {
         >
           {slides.map((slide, index) => (
             <figure key={slide.src} className="w-full shrink-0 snap-center">
-              <div className="relative aspect-[4/5] w-full bg-brand-cream sm:aspect-[4/3]">
+              <div className="relative aspect-[3/4] w-full bg-brand-cream sm:aspect-[4/3]">
                 <Image
                   src={slide.src}
                   alt={slide.alt}

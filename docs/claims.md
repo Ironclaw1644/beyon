@@ -84,9 +84,9 @@ Photo alt text describes what is visible in each picture (for example "queen bed
 | Optional email updates opt-in | Inquiry, tour, and contact forms | Feeds the subscriber list used by admin email blasts |
 | "Please do not include medical details…" | Every form, Resources, FAQ | Privacy policy for a non-HIPAA stack, not a claim about care |
 
-## Illustrative images
+## AI-generated lifestyle images
 
-These paths are placeholder slots for AI-generated lifestyle images:
+These paths hold AI-generated lifestyle images:
 
 - `public/images/people/hero.webp`
 - `community-outing.webp`
@@ -94,7 +94,7 @@ These paths are placeholder slots for AI-generated lifestyle images:
 - `volunteer.webp`
 - `staff-care.webp`
 
-They always render with an "Illustrative image" caption, and their alt text begins with "Illustrative image of…". They must never be presented as Beyon Vital staff, residents, or activities.
+The "Illustrative image" caption was removed at the operator's request on 2026-09-13. Alt text describes the scene only. Copy and alt text must still never present these people as Beyon Vital staff, residents, or activities.
 
 ## Deliberately not claimed
 
