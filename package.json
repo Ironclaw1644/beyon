@@ -10,7 +10,8 @@
     "email:test": "node scripts/send-test-email.mjs",
     "email:sanity": "node scripts/sanity-blast-skip.mjs",
     "generate:brand": "python3 scripts/generate-brand-assets.py",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test scripts/inbox.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
@@ -20,15 +21,19 @@
     "next": "15.5.12",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "resend": "^6.28.0",
+    "sanitize-html": "^2.17.7",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/sanitize-html": "^2.16.1",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.13",
     "typescript": "^5.8.2"
   }
 }

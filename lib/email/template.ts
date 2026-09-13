@@ -93,7 +93,11 @@ function renderEmailShell(input: {
   contentHtml: string;
   unsubscribeUrl?: string;
   footerNote?: string;
+  /** 1:1 mail reads like a letter: no big subject heading. */
+  hideTitle?: boolean;
+  footerEmail?: string;
 }) {
+  const footerEmail = input.footerEmail || business.email;
   // Invisible preheader padded so clients don't pull body text into the preview.
   const preview = input.previewText
     ? `<div style="display:none;max-height:0;max-width:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${C.cream};opacity:0;">${escapeHtml(
@@ -155,7 +159,7 @@ ${preview}
         </tr>
         <tr>
           <td class="bv-px" bgcolor="${C.white}" style="background-color:${C.white};padding:28px 28px 20px 28px;">
-            <h1 style="margin:0 0 16px 0;font-family:${SERIF};font-size:24px;line-height:30px;font-weight:bold;color:${C.ink};word-break:break-word;">${escapeHtml(input.title)}</h1>
+            ${input.hideTitle ? '' : `<h1 style="margin:0 0 16px 0;font-family:${SERIF};font-size:24px;line-height:30px;font-weight:bold;color:${C.ink};word-break:break-word;">${escapeHtml(input.title)}</h1>`}
             ${input.contentHtml}
           </td>
         </tr>
@@ -164,7 +168,7 @@ ${preview}
             <strong style="color:${C.ink};">${escapeHtml(business.name)}</strong><br />
             <a href="${business.phoneHref}" style="color:${C.red};text-decoration:underline;">${escapeHtml(business.phone)}</a>
             &nbsp;&middot;&nbsp;
-            <a href="mailto:${escapeHtml(business.email)}" style="color:${C.red};text-decoration:underline;">${escapeHtml(business.email)}</a><br />
+            <a href="mailto:${escapeHtml(footerEmail)}" style="color:${C.red};text-decoration:underline;">${escapeHtml(footerEmail)}</a><br />
             ${escapeHtml(business.address)}<br />
             <a href="${SITE_URL}" style="color:${C.red};text-decoration:underline;">${escapeHtml(siteLabel())}</a>
             ${unsubscribe}
@@ -184,6 +188,22 @@ function textFooter(unsubscribeUrl?: string, footerNote?: string) {
   if (footerNote) lines.push('', footerNote);
   if (unsubscribeUrl) lines.push('', `Unsubscribe: ${unsubscribeUrl}`);
   return lines.join('\n');
+}
+
+/**
+ * 1:1 mail from the admin inbox (replies and new messages). Same branded shell and
+ * body formatting as blasts, but no heading and no unsubscribe footer: this is
+ * personal correspondence, not marketing.
+ */
+export function renderDirectEmail(input: { subject: string; body: string }): RenderedEmail {
+  const html = renderEmailShell({
+    title: input.subject,
+    contentHtml: renderBodyHtml(input.body),
+    hideTitle: true,
+    footerEmail: 'hello@beyonvital.com'
+  });
+  const text = [input.body.trim(), '', '--', business.name, business.phone, 'hello@beyonvital.com', SITE_URL].join('\n');
+  return { html, text };
 }
 
 export function renderMarketingEmail(input: {

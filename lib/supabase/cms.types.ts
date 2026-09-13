@@ -174,6 +174,50 @@ export type Database = {
         Update: Partial<Tables['activity_events']['Row']>;
         Relationships: [];
       };
+      inbox_threads: {
+        Row: {
+          id: string;
+          subject: string;
+          participant_email: string;
+          participant_name: string | null;
+          snippet: string;
+          last_message_at: string;
+          unread: boolean;
+          archived_at: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Tables['inbox_threads']['Row']> & Pick<Tables['inbox_threads']['Row'], 'participant_email'>;
+        Update: Partial<Tables['inbox_threads']['Row']>;
+        Relationships: [];
+      };
+      inbox_messages: {
+        Row: {
+          id: string;
+          thread_id: string;
+          direction: 'in' | 'out';
+          resend_email_id: string | null;
+          message_id: string | null;
+          in_reply_to: string | null;
+          references: string | null;
+          from_email: string;
+          from_name: string | null;
+          to_emails: string[];
+          cc_emails: string[];
+          subject: string;
+          text_body: string | null;
+          html_body: string | null;
+          attachments: Json;
+          forward_status: string | null;
+          forward_error: string | null;
+          sent_status: string | null;
+          send_error: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Tables['inbox_messages']['Row']> &
+          Pick<Tables['inbox_messages']['Row'], 'thread_id' | 'direction' | 'from_email'>;
+        Update: Partial<Tables['inbox_messages']['Row']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

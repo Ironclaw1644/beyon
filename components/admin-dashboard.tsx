@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { RotateCcw, Trash2 } from 'lucide-react';
 import type { Announcement, LocalLead, Subscriber } from '@/lib/types';
 import { Badge, Button, Card } from '@/components/ui';
+import { AdminInbox } from '@/components/admin-inbox';
 import { stripMetaBlock } from '@/lib/forms';
 
 type LeadRecord = LocalLead & { _notes?: { id: string; note: string; created_at: string }[] };
@@ -56,7 +57,7 @@ type EmailCampaign = {
   created_at: string;
 };
 
-const tabs = ['leads', 'announcements', 'subscribers', 'activity', 'email'] as const;
+const tabs = ['leads', 'inbox', 'announcements', 'subscribers', 'activity', 'email'] as const;
 type Tab = (typeof tabs)[number];
 
 export function AdminDashboard({
@@ -113,6 +114,27 @@ export function AdminDashboard({
   const [testingCampaign, setTestingCampaign] = useState(false);
   const [emailMessage, setEmailMessage] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [inboxUnread, setInboxUnread] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadInboxSummary() {
+      try {
+        const res = await fetch('/api/admin/inbox?summary=1');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) setInboxUnread(Number(data.unreadCount || 0));
+      } catch {
+        // The badge is best-effort; the Inbox tab shows real errors.
+      }
+    }
+    void loadInboxSummary();
+    const timer = window.setInterval(loadInboxSummary, 60_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   async function fetchLeads() {
     setLoadingLeads(true);
@@ -630,11 +652,16 @@ export function AdminDashboard({
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold ${
+            className={`inline-flex items-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold ${
               tab === t ? 'bg-brand-ink text-white' : 'border border-brand-ink/10 bg-white text-brand-muted'
             }`}
           >
             {t[0].toUpperCase() + t.slice(1)}
+            {t === 'inbox' && inboxUnread > 0 ? (
+              <span className="ml-2 rounded-full bg-brand-primary px-1.5 py-0.5 text-[11px] font-bold leading-none text-white" aria-label={`${inboxUnread} unread`}>
+                {inboxUnread > 99 ? '99+' : inboxUnread}
+              </span>
+            ) : null}
           </button>
         ))}
       </div>
@@ -960,6 +987,8 @@ export function AdminDashboard({
             ) : null}
           </div>
         )}
+
+        {tab === 'inbox' && <AdminInbox onUnreadCount={setInboxUnread} />}
 
         {tab === 'announcements' && (
           <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
