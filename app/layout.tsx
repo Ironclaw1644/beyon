@@ -5,6 +5,7 @@ import './globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { MobileStickyCTA } from '@/components/mobile-sticky-cta';
+import { NewsletterWidget } from '@/components/newsletter-widget';
 import { StructuredData } from '@/components/structured-data';
 import { ActivityTracker } from '@/components/activity-tracker';
 import { business } from '@/lib/content';
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <main id="main">{children}</main>
         <SiteFooter />
         <MobileStickyCTA />
+        <NewsletterWidget />
       </body>
     </html>
   );
