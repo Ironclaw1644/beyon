@@ -39,9 +39,18 @@ function hashIp(ip: string) {
   return createHash('sha256').update(`${salt}:${ip}`).digest('hex');
 }
 
+function safeDecode(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 function geoFromRequest(req: NextRequest) {
   const geo = (req as unknown as { geo?: { city?: string; region?: string; country?: string } }).geo;
-  const city = firstHeaderValue(req.headers.get('x-vercel-ip-city')) || geo?.city || '';
+  // Vercel percent-encodes the city header ("New%20York").
+  const city = safeDecode(firstHeaderValue(req.headers.get('x-vercel-ip-city'))) || geo?.city || '';
   const region = firstHeaderValue(req.headers.get('x-vercel-ip-country-region')) || geo?.region || '';
   const country = firstHeaderValue(req.headers.get('x-vercel-ip-country')) || geo?.country || '';
   return { city, region, country };
