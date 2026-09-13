@@ -12,11 +12,21 @@ export async function GET() {
 export async function POST(req: Request) {
   const unauthorized = await requireAdminApi();
   if (unauthorized) return unauthorized;
-  const body = await req.json();
-  const item = await upsertAnnouncement(body);
-  revalidatePath('/');
-  revalidatePath('/announcements');
-  return NextResponse.json(item);
+  const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
+  const title = typeof body?.title === 'string' ? body.title.trim() : '';
+  const text = typeof body?.body === 'string' ? body.body.trim() : '';
+  if (!body || !title || !text) {
+    return NextResponse.json({ error: 'title and body are required' }, { status: 400 });
+  }
+  try {
+    const item = await upsertAnnouncement({ ...body, title, body: text } as Parameters<typeof upsertAnnouncement>[0]);
+    revalidatePath('/');
+    revalidatePath('/announcements');
+    return NextResponse.json(item);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to save announcement';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: Request) {
