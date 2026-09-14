@@ -52,7 +52,8 @@ Copy lives in `lib/content.ts`. If a statement is not listed here, it should not
 | Client must be at least 18 years of age | Requirements, Our Home, Residential page, Chesterfield County page, inquiry sidebar, FAQ | Flyer "REQUIREMENTS" |
 | Client must have acceptable insurance (no insurers named) | Same | Flyer "REQUIREMENTS" |
 | Client must be willing to live with other residents | Same | Flyer "REQUIREMENTS" |
-| The service is called "Residential Group Home" | Service page title and URL | Brief (the Flyer describes the home and residents but does not use this label) |
+| "Accepting ID/DD Waivers" | Main print flyer only (`assets/flyers/beyon-vital-flyer.html`, Requirements list). Not on the website yet | Client request relayed by the operator, 2026-09-13 ("at the bottom for requirements can you put accepting ID-DD Waivers") |
+| The service is called "Residential Group Home" | Service page title and URL; main print flyer heading (middle panel, replacing "Beyon Vital Community Services") | Brief, then confirmed by the client 2026-09-13 ("put Residential Group Home right at the top in the middle") |
 | Photos on the site are of this home | Our Home carousel, photo grids, Location page, JSON-LD `image` | Text A 11:28 ("I will send you the pictures") and 11:37 (photos sent) |
 
 Photo alt text describes what is visible in each picture (for example "queen bed", "stamped concrete patio"). It makes no claims beyond the images themselves.
