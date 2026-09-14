@@ -17,7 +17,7 @@ Copy lives in `lib/content.ts`. If a statement is not listed here, it should not
 | Claim | Where | Source |
 | --- | --- | --- |
 | Business name "Beyon Vital, LLC" | Everywhere, JSON-LD `name` | Flyer (title panel, mission, vision) |
-| Brand line "Beyon Vital Community Services" | Header, footer, OG image, email header, JSON-LD `alternateName` | Logo |
+| Brand line "Beyon Vital Residential Group Home" (tagline "Residential Group Home", replacing "Community Services") | Header, footer, logo files (`logo-full.png`, OG image), email header, web manifest, JSON-LD `alternateName`, both print flyers | Logo (original tagline); client request relayed by the operator, 2026-09-13 (tagline changed to "Residential Group Home") |
 | Phone (804) 366-3442 | Header CTAs, footer, contact, emails, JSON-LD `telephone` | Flyer ("Contact us") |
 | Email beyonvitalllc@gmail.com | Footer, contact, emails, JSON-LD `email` | Flyer ("Contact us") |
 | Address 8120 Clovertree Ct, North Chesterfield, VA 23235 | Footer, contact, locations, emails, JSON-LD `address` | Flyer ("Contact us") |
@@ -52,8 +52,8 @@ Copy lives in `lib/content.ts`. If a statement is not listed here, it should not
 | Client must be at least 18 years of age | Requirements, Our Home, Residential page, Chesterfield County page, inquiry sidebar, FAQ | Flyer "REQUIREMENTS" |
 | Client must have acceptable insurance (no insurers named) | Same | Flyer "REQUIREMENTS" |
 | Client must be willing to live with other residents | Same | Flyer "REQUIREMENTS" |
-| "Accepting ID/DD Waivers" | Main print flyer only (`assets/flyers/beyon-vital-flyer.html`, Requirements list). Not on the website yet | Client request relayed by the operator, 2026-09-13 ("at the bottom for requirements can you put accepting ID-DD Waivers") |
-| The service is called "Residential Group Home" | Service page title and URL; main print flyer heading (middle panel, replacing "Beyon Vital Community Services") | Brief, then confirmed by the client 2026-09-13 ("put Residential Group Home right at the top in the middle") |
+| "Accepting ID/DD Waivers" (prose: "We accept ID/DD Waivers.") | Site-wide: last item of the requirements list (Requirements, Our Home, Residential page, Chesterfield County page, inquiry sidebar, Resources), FAQ answers about requirements; main print flyer Requirements list; Community Engagement flyer "Our Home" card. No other waiver, Medicaid, or licensure claims | Client request relayed by the operator, 2026-09-13 ("at the bottom for requirements can you put accepting ID-DD Waivers") |
+| The service is called "Residential Group Home" | Service page title and URL; main print flyer heading (middle panel); Community Engagement flyer middle panel (both replacing "Beyon Vital Community Services") | Brief, then confirmed by the client 2026-09-13 ("put Residential Group Home right at the top in the middle") |
 | Photos on the site are of this home | Our Home carousel, photo grids, Location page, JSON-LD `image` | Text A 11:28 ("I will send you the pictures") and 11:37 (photos sent) |
 
 Photo alt text describes what is visible in each picture (for example "queen bed", "stamped concrete patio"). It makes no claims beyond the images themselves.

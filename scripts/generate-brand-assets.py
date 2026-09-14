@@ -144,7 +144,7 @@ def build_icons(mark: Image.Image):
     fit(mark, 256, scale=1.0).save(PUBLIC / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
 
     manifest = {
-        'name': 'Beyon Vital Community Services',
+        'name': 'Beyon Vital Residential Group Home',
         'short_name': 'Beyon Vital',
         'start_url': '/',
         'display': 'standalone',

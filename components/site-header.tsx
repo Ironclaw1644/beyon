@@ -19,7 +19,7 @@ export function SiteHeader() {
           />
           <span className="min-w-0 leading-none">
             <span className="block truncate font-display text-xl font-bold uppercase tracking-[0.06em] text-brand-primary sm:text-2xl">Beyon Vital</span>
-            <span className="mt-1 block truncate text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-brand-muted sm:text-[0.65rem]">Community Services</span>
+            <span className="mt-1 block truncate text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-brand-muted sm:text-[0.65rem]">Residential Group Home</span>
           </span>
         </Link>
         <nav className="hidden items-center gap-4 xl:flex" aria-label="Primary">

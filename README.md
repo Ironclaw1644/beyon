@@ -1,4 +1,4 @@
-# Beyon Vital Community Services — website + admin
+# Beyon Vital Residential Group Home — website + admin
 
 Marketing site and protected admin for **Beyon Vital, LLC** (North Chesterfield, VA): residential group home and Community Engagement. Next.js App Router, TypeScript, Tailwind, Supabase (schema `beyon`), Resend.
 

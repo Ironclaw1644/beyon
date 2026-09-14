@@ -9,7 +9,7 @@ export type SiteImage = { src: string; alt: string };
 export const business = {
   name: 'Beyon Vital, LLC',
   shortName: 'Beyon Vital',
-  brandLine: 'Beyon Vital Community Services',
+  brandLine: 'Beyon Vital Residential Group Home',
   phone: '(804) 366-3442',
   phoneSchema: '+1-804-366-3442',
   phoneHref: 'tel:+18043663442',
@@ -75,7 +75,8 @@ export const requirementsIntro = 'To ensure the comfort of staff and potential r
 export const requirements = [
   { label: 'Age', text: 'Client must be at least 18 years of age.' },
   { label: 'Insurance', text: 'Client must have acceptable insurance.' },
-  { label: 'Shared living', text: 'Client must be willing to live with other residents.' }
+  { label: 'Shared living', text: 'Client must be willing to live with other residents.' },
+  { label: 'Waivers', text: 'Accepting ID/DD Waivers' }
 ];
 
 export const communityEngagement = {
@@ -139,7 +140,7 @@ export const servicePages: Record<ServiceSlug, ServicePage> = {
     trackCta: 'placement-inquiry',
     faqs: [
       { q: 'Who is the residential group home for?', a: `Mature and young adults. ${missionFocus}` },
-      { q: 'What are the requirements?', a: 'Clients must be at least 18 years of age, must have acceptable insurance, and must be willing to live with other residents.' },
+      { q: 'What are the requirements?', a: 'Clients must be at least 18 years of age, must have acceptable insurance, and must be willing to live with other residents. We accept ID/DD Waivers.' },
       { q: 'What is the home like?', a: `${homeIntro}. ${homeFeatureSentence}` }
     ]
   },
@@ -197,7 +198,7 @@ export const locationPages: Record<LocationSlug, LocationPage> = {
     metaDescription: 'Therapeutic, behavioral, and psycho-educational services for mature and young adults in Chesterfield County, VA, from Beyon Vital, LLC in North Chesterfield.',
     summary: 'For individuals and families in Chesterfield County looking for therapeutic, behavioral, and psycho-educational services for mature and young adults.',
     body: [
-      'Our residential group home is in North Chesterfield. To ensure the comfort of staff and potential residents, clients must meet three criteria before moving in.',
+      'Our residential group home is in North Chesterfield. To ensure the comfort of staff and potential residents, clients must meet the criteria below before moving in.',
       'Our goal is to improve the lives of our clients and for our clients to receive memorable care from our team.'
     ],
     feature: 'requirements'
@@ -224,7 +225,7 @@ export const faqs: Faq[] = [
   { q: 'Who do you serve?', a: `Mature and young adults. ${missionFocus}` },
   {
     q: 'What are the requirements for the residential group home?',
-    a: 'Clients must be at least 18 years of age, must have acceptable insurance, and must be willing to live with other residents.'
+    a: 'Clients must be at least 18 years of age, must have acceptable insurance, and must be willing to live with other residents. We accept ID/DD Waivers.'
   },
   {
     q: 'Which insurance is acceptable?',

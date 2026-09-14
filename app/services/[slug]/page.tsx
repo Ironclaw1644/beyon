@@ -107,7 +107,7 @@ function ResidentialDetails() {
         </div>
       </Section>
       <Section title="Requirements" description={requirementsIntro}>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {requirements.map((item) => (
             <Card key={item.label}>
               <h3 className="font-semibold text-brand-ink">{item.label}</h3>

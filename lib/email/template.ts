@@ -151,7 +151,7 @@ ${preview}
                 </td>
                 <td valign="middle" style="padding:0 0 0 14px;font-family:${SERIF};font-size:22px;line-height:26px;font-weight:bold;letter-spacing:1px;color:${C.white};">
                   BEYON VITAL<br />
-                  <span style="font-family:${SANS};font-size:11px;line-height:16px;font-weight:normal;letter-spacing:3px;color:${C.white};">COMMUNITY SERVICES</span>
+                  <span style="font-family:${SANS};font-size:11px;line-height:16px;font-weight:normal;letter-spacing:3px;color:${C.white};">RESIDENTIAL GROUP HOME</span>
                 </td>
               </tr>
             </table>

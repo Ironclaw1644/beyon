@@ -9,7 +9,7 @@ export const OG_IMAGE = {
   path: '/brand/og-image.png',
   width: 1200,
   height: 630,
-  alt: 'Beyon Vital Community Services: Residential Group Home and Community Engagement in North Chesterfield, VA'
+  alt: 'Beyon Vital, LLC: Residential Group Home and Community Engagement in North Chesterfield, VA'
 };
 
 export function buildMetadata({ title, description, path = '/' }: { title: string; description?: string; path?: string }): Metadata {

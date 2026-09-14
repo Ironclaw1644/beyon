@@ -20,7 +20,7 @@ export default function RequirementsPage() {
         actions={<Button href="/placement-inquiry" trackCta="placement-inquiry">Start an Inquiry</Button>}
       />
       <Section title="Criteria for residents" description="These criteria apply to our residential group home in North Chesterfield, VA.">
-        <ol className="grid gap-4 md:grid-cols-3">
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {requirements.map((item, index) => (
             <li key={item.label}>
               <Reveal delayMs={index * 60}>

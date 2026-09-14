@@ -14,7 +14,7 @@ export function SiteFooter() {
             <Image src="/brand/logo-mark.png" alt="Beyon Vital logo" width={40} height={40} sizes="40px" className="h-10 w-10" loading="lazy" />
             <p className="leading-none">
               <span className="block font-display text-lg font-bold uppercase tracking-[0.06em] text-brand-primary">Beyon Vital</span>
-              <span className="mt-1 block text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-brand-muted">Community Services</span>
+              <span className="mt-1 block text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-brand-muted">Residential Group Home</span>
             </p>
           </div>
           <p className="mt-3 text-sm leading-6 text-brand-muted">Therapeutic, behavioral, and psycho-educational services for mature and young adults.</p>
