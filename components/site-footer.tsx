@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { NewsletterBand } from '@/components/newsletter-band';
+import { LuziqCredit } from '@/components/luziq-credit';
 import { business, footerLinks, locationPages, locationSlugs } from '@/lib/content';
 
 export function SiteFooter() {
@@ -51,7 +52,10 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-brand-ink/5">
-        <p className="container-shell py-4 text-xs text-brand-muted">© {new Date().getFullYear()} {business.name}</p>
+        <div className="container-shell flex flex-col gap-1 py-4 text-xs text-brand-muted sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} {business.name}</p>
+          <LuziqCredit />
+        </div>
       </div>
     </footer>
     </>
