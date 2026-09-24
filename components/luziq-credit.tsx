@@ -10,7 +10,7 @@ export function LuziqCredit() {
     <p>
       Website powered by{' '}
       <a
-        href="https://luziq.ai/"
+        href="https://luziq.ai/websites/"
         target="_blank"
         rel="noreferrer"
         className="transition duration-150 ease-out hover:text-brand-ink hover:underline hover:underline-offset-4"
