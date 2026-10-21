@@ -7,6 +7,7 @@ import type { Announcement, LocalLead, Subscriber } from '@/lib/types';
 import { Badge, Button, Card } from '@/components/ui';
 import { AdminInbox } from '@/components/admin-inbox';
 import { stripMetaBlock } from '@/lib/forms';
+import { classifySource } from '@/lib/source';
 
 type LeadRecord = LocalLead & { _notes?: { id: string; note: string; created_at: string }[] };
 
@@ -42,6 +43,23 @@ type ActivityData = {
     conversions: number;
     conversionRate: number;
   }>;
+  visitSources?: SourceTally;
+  leadSources?: SourceTally;
+};
+
+type SourceTally = {
+  channels: Array<{ channel: string; label: string; count: number }>;
+  details: Array<{ channel: string; detail: string; count: number }>;
+};
+
+type SerpData = {
+  location: string;
+  lastRun: string | null;
+  queries: Array<{
+    query: string;
+    latest: { captured_on: string; position: number | null; url: string | null; top_results: { position: number; domain: string }[] };
+    previous: { captured_on: string; position: number | null } | null;
+  }>;
 };
 
 type EmailCampaign = {
@@ -57,7 +75,7 @@ type EmailCampaign = {
   created_at: string;
 };
 
-const tabs = ['leads', 'inbox', 'announcements', 'subscribers', 'activity', 'email'] as const;
+const tabs = ['leads', 'inbox', 'announcements', 'subscribers', 'activity', 'seo', 'email'] as const;
 type Tab = (typeof tabs)[number];
 
 export function AdminDashboard({
@@ -104,6 +122,8 @@ export function AdminDashboard({
   const [activityData, setActivityData] = useState<ActivityData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(false);
   const [activityError, setActivityError] = useState<string | null>(null);
+  const [serpData, setSerpData] = useState<SerpData | null>(null);
+  const [serpError, setSerpError] = useState<string | null>(null);
   const [emailSubject, setEmailSubject] = useState('');
   const [emailPreview, setEmailPreview] = useState('');
   const [emailBody, setEmailBody] = useState('');
@@ -200,6 +220,23 @@ export function AdminDashboard({
       setActivityError(error instanceof Error ? error.message : 'Failed to load activity analytics');
     } finally {
       setLoadingActivity(false);
+    }
+  }
+
+  async function fetchSerp() {
+    setSerpError(null);
+    try {
+      const res = await fetch('/api/admin/serp');
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load search rankings');
+      setSerpData(data as SerpData);
+    } catch (error) {
+      setSerpData(null);
+      setSerpError(error instanceof Error ? error.message : 'Failed to load search rankings');
     }
   }
 
@@ -315,6 +352,11 @@ export function AdminDashboard({
     if (tab !== 'activity') return;
     fetchActivity(activityDays);
   }, [tab, activityDays]);
+
+  useEffect(() => {
+    if (tab !== 'seo' || serpData) return;
+    fetchSerp();
+  }, [tab, serpData]);
 
   useEffect(() => {
     if (tab !== 'email') return;
@@ -656,7 +698,7 @@ export function AdminDashboard({
               tab === t ? 'bg-brand-ink text-white' : 'border border-brand-ink/10 bg-white text-brand-muted'
             }`}
           >
-            {t[0].toUpperCase() + t.slice(1)}
+            {t === 'seo' ? 'SEO' : t[0].toUpperCase() + t.slice(1)}
             {t === 'inbox' && inboxUnread > 0 ? (
               <span className="ml-2 rounded-full bg-brand-primary px-1.5 py-0.5 text-[11px] font-bold leading-none text-white" aria-label={`${inboxUnread} unread`}>
                 {inboxUnread > 99 ? '99+' : inboxUnread}
@@ -864,6 +906,7 @@ export function AdminDashboard({
                     <DetailRow label="Email" value={selectedLead.contact_email} />
                     <DetailRow label="Phone" value={selectedLead.contact_phone} />
                     <DetailRow label="Lead Type" value={selectedLead.lead_type} />
+                    <DetailRow label="Found via" value={classifySource(selectedLead).detail} />
                     <DetailRow label="Status" value={selectedLead.status} />
                     <DetailRow label="Forwarded to System" value={selectedLead.forwarded_to_leadops ? 'Yes' : 'No'} />
                     <DetailRow label="Manual Confirmation Sent" value={selectedLead.confirmation_sent_at || 'No'} />
@@ -1285,6 +1328,17 @@ export function AdminDashboard({
                   </Card>
                 </div>
 
+                {activityData.visitSources && activityData.leadSources ? (
+                  <div className="grid gap-5 lg:grid-cols-2">
+                    <SourceCard
+                      title="Visits by Source"
+                      description="How each visit arrived. AI assistants means ChatGPT, Perplexity, Copilot, Gemini, or Claude sent the visitor."
+                      tally={activityData.visitSources}
+                    />
+                    <SourceCard title="Inquiries by Source" description="Where the people who sent an inquiry first came from." tally={activityData.leadSources} />
+                  </div>
+                ) : null}
+
                 <Card>
                   <h3 className="text-base font-semibold text-brand-ink">How to Use This Page</h3>
                   <ul className="mt-3 space-y-2 text-sm text-brand-muted">
@@ -1295,6 +1349,61 @@ export function AdminDashboard({
                   </ul>
                 </Card>
               </>
+            ) : null}
+          </div>
+        )}
+
+        {tab === 'seo' && (
+          <div className="space-y-5">
+            <Card>
+              <h2 className="text-lg font-semibold text-brand-ink">Google Rankings</h2>
+              <p className="mt-1 text-sm text-brand-muted">
+                Where beyonvital.com shows up on Google for the searches families are likely to use, checked every Tuesday from Richmond, VA (top 20 results).
+                {serpData?.lastRun ? ` Last check: ${serpData.lastRun}.` : ''}
+              </p>
+            </Card>
+            {serpError ? (
+              <Card>
+                <p className="text-sm text-rose-700">{serpError}</p>
+              </Card>
+            ) : null}
+            {serpData ? (
+              <Card>
+                {serpData.queries.length === 0 ? (
+                  <p className="text-sm text-brand-muted">No rank checks yet. The first one runs on Tuesday.</p>
+                ) : (
+                  <div className="-mx-4 w-full overflow-x-auto px-4">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr className="border-b text-left text-xs uppercase tracking-wider text-brand-muted">
+                          <th className="px-2 py-2">Search</th>
+                          <th className="px-2 py-2">Position</th>
+                          <th className="px-2 py-2">Change</th>
+                          <th className="px-2 py-2">Our page</th>
+                          <th className="px-2 py-2">Top result</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {serpData.queries.map((item) => {
+                          const now = item.latest.position;
+                          const before = item.previous?.position ?? null;
+                          const change =
+                            item.previous == null ? 'New' : now != null && before != null ? (before - now === 0 ? 'Same' : before - now > 0 ? `Up ${before - now}` : `Down ${now - before}`) : now != null ? 'Entered top 20' : before != null ? 'Dropped out' : 'Same';
+                          return (
+                            <tr key={item.query} className="border-b border-brand-ink/5">
+                              <td className="px-2 py-2">{item.query}</td>
+                              <td className="px-2 py-2 font-semibold text-brand-ink">{now != null ? `#${now}` : 'Not in top 20'}</td>
+                              <td className="px-2 py-2">{change}</td>
+                              <td className="px-2 py-2">{item.latest.url ? item.latest.url.replace(/^https?:\/\/(www\.)?beyonvital\.com/, '') || '/' : '-'}</td>
+                              <td className="px-2 py-2">{item.latest.top_results?.[0]?.domain || '-'}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Card>
             ) : null}
           </div>
         )}
@@ -1454,6 +1563,38 @@ export function AdminDashboard({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function SourceCard({ title, description, tally }: { title: string; description: string; tally: SourceTally }) {
+  return (
+    <Card>
+      <h3 className="text-base font-semibold text-brand-ink">{title}</h3>
+      <p className="mt-1 text-sm text-brand-muted">{description}</p>
+      {tally.channels.length === 0 ? (
+        <p className="mt-4 text-sm text-brand-muted">Nothing in this period yet.</p>
+      ) : (
+        <>
+          <ul className="mt-4 space-y-1.5 text-sm">
+            {tally.channels.map((item) => (
+              <li key={item.channel} className="flex justify-between gap-3">
+                <span className="text-brand-ink">{item.label}</span>
+                <span className="font-semibold text-brand-ink">{item.count}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-brand-muted">Details</p>
+          <ul className="mt-2 space-y-1 text-xs text-brand-muted">
+            {tally.details.map((item) => (
+              <li key={`${item.channel}:${item.detail}`} className="flex justify-between gap-3">
+                <span className="break-all">{item.detail}</span>
+                <span>{item.count}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </Card>
   );
 }
 

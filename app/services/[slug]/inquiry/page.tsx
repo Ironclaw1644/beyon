@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (slug !== 'community-engagement') return {};
   return buildMetadata({
-    title: 'Community Engagement Inquiry | Beyon Vital, LLC',
-    description: `Ask Beyon Vital, LLC about Community Engagement (${communityEngagement.hours}): community outings, volunteer work, and life coaching. Or call ${business.phone}.`,
+    title: 'Community Engagement Inquiry, Chesterfield VA | Beyon Vital',
+    description: `Ask Beyon Vital, LLC about Community Engagement (${communityEngagement.hours}) in North Chesterfield, VA: community outings, volunteer work, and life coaching. Or call ${business.phone}.`,
     path: `/services/${slug}/inquiry`
   });
 }

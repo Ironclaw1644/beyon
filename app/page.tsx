@@ -7,10 +7,10 @@ import { PhotoGrid } from '@/components/photo-grid';
 import { IllustrativeImage } from '@/components/illustrative-image';
 import { getAnnouncements } from '@/lib/announcements';
 import { buildMetadata } from '@/lib/site';
-import { business, coreValues, homeFeatures, homeIntro, homePhotos, mission, peopleImages, servicePages, serviceSlugs, vision } from '@/lib/content';
+import { answerSummary, business, coreValues, homeFeatures, homeIntro, homePhotos, locationPages, locationSlugs, mission, peopleImages, servicePages, serviceSlugs, vision } from '@/lib/content';
 
 export const metadata = buildMetadata({
-  title: 'Beyon Vital, LLC | Group Home & Community Engagement in North Chesterfield, VA',
+  title: 'Beyon Vital Residential Group Home | North Chesterfield, VA',
   path: '/'
 });
 
@@ -22,7 +22,7 @@ export default async function HomePage() {
       <PageHero
         eyebrow={business.brandLine}
         title="Bringing positivity and remarkable services into our clients’ lives."
-        description="Therapeutic, behavioral, and psycho-educational services for mature and young adults: a residential group home in North Chesterfield, VA, and Community Engagement from 9am–3pm."
+        description={answerSummary}
         image={peopleImages.hero}
         actions={
           <>
@@ -94,6 +94,25 @@ export default async function HomePage() {
           <Button href="/our-home" variant="ghost" trackCta="view-our-home">View Our Home</Button>
           <Button href="/requirements" variant="secondary" trackCta="review-requirements">Review Requirements</Button>
         </div>
+      </Section>
+
+      <Section eyebrow="Where we are" title="Areas we serve" description={`Our home is at ${business.address}.`}>
+        <ul className="grid gap-4 md:grid-cols-3">
+          {locationSlugs.map((slug) => (
+            <li key={slug}>
+              <Card className="h-full">
+                <h3 className="font-semibold text-brand-ink">{locationPages[slug].shortName}</h3>
+                <Link href={`/locations/${slug}`} className="mt-3 inline-flex text-sm font-semibold text-brand-primary hover:text-brand-primary-dark">
+                  {locationPages[slug].title}
+                </Link>
+              </Card>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 text-sm text-brand-muted">
+          Questions about requirements or ID/DD Waivers? See our{' '}
+          <Link href="/faq" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">frequently asked questions</Link>.
+        </p>
       </Section>
 
       {announcements.length ? (

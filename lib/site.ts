@@ -3,7 +3,7 @@ import { business, communityEngagement, homePhotos, locationPages, locationSlugs
 import { absoluteUrl } from '@/lib/utils';
 
 export const defaultDescription =
-  'Beyon Vital, LLC provides therapeutic, behavioral, and psycho-educational services for mature and young adults, with a residential group home and Community Engagement (9am–3pm) in North Chesterfield, VA.';
+  'Beyon Vital Residential Group Home in North Chesterfield, VA: a 4-bed home for mature and young adults with therapeutic, behavioral, and psycho-educational support.';
 
 export const OG_IMAGE = {
   path: '/brand/og-image.png',
@@ -50,7 +50,8 @@ function areaServed() {
 // schema.org has no group-home or social-services business type, and
 // MedicalBusiness would imply clinical/licensure claims the client has not made,
 // so this is a LocalBusiness with a Wikipedia additionalType. No ratings, geo,
-// sameAs, or opening hours for the residence (none were provided).
+// sameAs, or opening hours for the residence (none were provided). Add sameAs
+// only for profiles the client confirms (e.g. a Google Business Profile).
 export function localBusinessJsonLd() {
   return {
     '@context': 'https://schema.org',
@@ -73,6 +74,7 @@ export function localBusinessJsonLd() {
       postalCode: business.postalCode,
       addressCountry: 'US'
     },
+    hasMap: business.mapsUrl,
     areaServed: areaServed(),
     hasOfferCatalog: {
       '@type': 'OfferCatalog',

@@ -103,6 +103,23 @@ export type Database = {
         Update: Partial<Tables['email_campaign_recipients']['Row']>;
         Relationships: [];
       };
+      serp_snapshots: {
+        Row: {
+          id: string;
+          query: string;
+          captured_on: string;
+          source: string;
+          location: string;
+          position: number | null;
+          url: string | null;
+          pages_checked: number;
+          top_results: { position: number; domain: string }[];
+          created_at: string;
+        };
+        Insert: Partial<Tables['serp_snapshots']['Row']> & Pick<Tables['serp_snapshots']['Row'], 'query' | 'location'>;
+        Update: Partial<Tables['serp_snapshots']['Row']>;
+        Relationships: [];
+      };
       rate_limit_hits: {
         Row: { id: number; bucket: string; key_hash: string; created_at: string };
         Insert: Partial<Tables['rate_limit_hits']['Row']> & Pick<Tables['rate_limit_hits']['Row'], 'bucket' | 'key_hash'>;

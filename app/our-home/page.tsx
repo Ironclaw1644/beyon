@@ -6,10 +6,10 @@ import { Reveal } from '@/components/reveal';
 import { business, homeFeatureSentence, homeFeatures, homeIntro, homePhotos, requirements, requirementsIntro } from '@/lib/content';
 
 export const metadata = buildMetadata({
-  title: 'Our Home: 4 Beds, 3 Bedrooms in North Chesterfield, VA | Beyon Vital, LLC',
+  title: 'Our Home: 4-Bed Group Home in North Chesterfield, VA',
   path: '/our-home',
   description:
-    'Photos of the Beyon Vital group home in North Chesterfield, VA: a safe and comfortable environment with 4 beds, 3 bedrooms, 1 1/2 bathrooms, updated appliances, a TV area, hardwood flooring, and an outdoor sitting area.'
+    'Photos of our 4-bed group home in North Chesterfield, VA: 3 bedrooms, 1 1/2 bathrooms, updated appliances, a TV area, hardwood flooring, and an outdoor sitting area.'
 });
 
 const slides = [

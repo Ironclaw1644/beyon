@@ -2,10 +2,31 @@ import 'server-only';
 
 import { cmsServerClient } from '@/lib/supabase/cmsServer';
 import type { Database } from '@/lib/supabase/cms.types';
+import { CHANNEL_LABELS, classifySource, type SourceChannel } from '@/lib/source';
 
 type ActivityRow = Database['beyon']['Tables']['activity_events']['Row'];
 
 type RangeDays = 7 | 30 | 90;
+
+const BOT_UA = /bot|crawl|spider|slurp|headlesschrome|lighthouse|google-inspectiontool|chrome-lighthouse|preview/i;
+
+function tally(entries: { channel: SourceChannel; detail: string }[]) {
+  const byChannel = new Map<SourceChannel, number>();
+  const byDetail = new Map<string, { channel: SourceChannel; detail: string; count: number }>();
+  for (const entry of entries) {
+    byChannel.set(entry.channel, (byChannel.get(entry.channel) || 0) + 1);
+    const key = `${entry.channel}:${entry.detail}`;
+    const current = byDetail.get(key) || { ...entry, count: 0 };
+    current.count += 1;
+    byDetail.set(key, current);
+  }
+  return {
+    channels: [...byChannel.entries()]
+      .map(([channel, count]) => ({ channel, label: CHANNEL_LABELS[channel], count }))
+      .sort((a, b) => b.count - a.count),
+    details: [...byDetail.values()].sort((a, b) => b.count - a.count).slice(0, 15)
+  };
+}
 
 function normalize(value: string | null | undefined, fallback = 'Unknown') {
   const text = (value || '').trim();
@@ -81,6 +102,23 @@ export async function getActivityAnalytics(days: RangeDays = 30) {
     .sort((a, b) => b.visits - a.visits)
     .slice(0, 15);
 
+  // A visit's source is its first page view: document.referrer and UTM tags
+  // only describe how the session arrived, not later in-site navigation.
+  const landings = new Map<string, ActivityRow>();
+  for (const row of pageViews) {
+    if (BOT_UA.test(row.user_agent || '')) continue;
+    const key = row.session_id || row.id;
+    if (!landings.has(key)) landings.set(key, row);
+  }
+  const visitSources = tally([...landings.values()].map((row) => classifySource(row)));
+
+  const { data: leadRows, error: leadError } = await supabase
+    .from('leads')
+    .select('referrer, utm_source, utm_medium')
+    .gte('created_at', since);
+  if (leadError) throw new Error(leadError.message);
+  const leadSources = tally((leadRows || []).map((row) => classifySource(row)));
+
   const visits = pageViews.length;
   const conversions = placementInquiries + tourRequests;
   const conversionRate = visits ? Number(((conversions / visits) * 100).toFixed(1)) : 0;
@@ -100,6 +138,8 @@ export async function getActivityAnalytics(days: RangeDays = 30) {
       desktop: Number(((deviceCounts.desktop / totalDevice) * 100).toFixed(1)),
       tablet: Number(((deviceCounts.tablet / totalDevice) * 100).toFixed(1))
     },
-    topCities
+    topCities,
+    visitSources,
+    leadSources
   };
 }

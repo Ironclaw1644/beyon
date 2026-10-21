@@ -7,7 +7,7 @@ import { communityEngagement, requirements } from '@/lib/content';
 import { NO_MEDICAL_NOTICE, inquiryExtraFields, inquirySummaryFields } from '@/lib/inquiry-fields';
 
 export const metadata = buildMetadata({
-  title: 'Inquire About Our Services | Beyon Vital, LLC',
+  title: 'Group Home Inquiry, North Chesterfield, VA | Beyon Vital',
   path: '/placement-inquiry',
   description: 'Send an inquiry about the Beyon Vital residential group home or Community Engagement. Contact details only; please do not include medical information.'
 });

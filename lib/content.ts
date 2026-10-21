@@ -39,6 +39,11 @@ export const coreValues = [
 
 export const homeIntro = 'A safe and comfortable environment';
 
+// Answer-first summary: the sentence an AI answer or a search snippet should
+// be able to lift as-is. Every clause is in docs/claims.md.
+export const answerSummary =
+  'Beyon Vital, LLC is a residential group home in North Chesterfield, VA, for mature and young adults, with therapeutic, behavioral, and psycho-educational support. We also offer Community Engagement from 9am–3pm, and we accept ID/DD Waivers.';
+
 export const homeFeatures = ['4 beds', '3 bedrooms', '1 1/2 bathrooms', 'Updated appliances', 'TV area', 'Hardwood flooring', 'Outdoor sitting area'];
 
 export const homeFeatureSentence =
@@ -111,6 +116,26 @@ export const footerLinks = [
 export const serviceSlugs = ['residential-group-home', 'community-engagement'] as const;
 export type ServiceSlug = (typeof serviceSlugs)[number];
 
+const waiverFaq: Faq = {
+  q: 'Does Beyon Vital accept ID/DD Waivers?',
+  a: 'Yes. Beyon Vital, LLC accepts ID/DD Waivers. Clients must also be at least 18 years of age, have acceptable insurance, and be willing to live with other residents.'
+};
+
+const bedsFaq: Faq = {
+  q: 'How many beds does the group home have?',
+  a: 'The home has 4 beds in 3 bedrooms, with 1 1/2 bathrooms, updated appliances, a TV area, hardwood flooring, and an outdoor sitting area.'
+};
+
+const areasFaq: Faq = {
+  q: 'What areas does Beyon Vital serve?',
+  a: 'Our residential group home is at 8120 Clovertree Ct, North Chesterfield, VA 23235. We serve North Chesterfield, Chesterfield County, and the Richmond, VA area.'
+};
+
+const tourFaq: Faq = {
+  q: 'Can I tour the home?',
+  a: 'You can request a tour of the home online. Share a few days and times that work for you, and we will follow up to schedule.'
+};
+
 type ServicePage = {
   title: string;
   eyebrow: string;
@@ -129,9 +154,9 @@ export const servicePages: Record<ServiceSlug, ServicePage> = {
   'residential-group-home': {
     title: 'Residential Group Home',
     eyebrow: 'Therapeutic · Behavioral · Psycho-educational',
-    metaTitle: 'Residential Group Home for Adults in North Chesterfield, VA | Beyon Vital, LLC',
+    metaTitle: 'Residential Group Home, North Chesterfield, VA | Beyon Vital',
     metaDescription:
-      'Therapeutic, behavioral, and psycho-educational support for mature and young adults in a safe and comfortable group home in North Chesterfield, VA.',
+      'Therapeutic, behavioral, and psycho-educational support for mature and young adults in a safe, comfortable 4-bed group home in North Chesterfield, VA.',
     summary: 'Therapeutic, behavioral, and psycho-educational support for mature and young adults, in a safe and comfortable home in North Chesterfield, VA.',
     bullets: ['Therapeutic support', 'Behavioral support', 'Psycho-educational support', 'Personalized goals for each client', 'A safe and comfortable home'],
     image: peopleImages.staffCare,
@@ -141,15 +166,18 @@ export const servicePages: Record<ServiceSlug, ServicePage> = {
     faqs: [
       { q: 'Who is the residential group home for?', a: `Mature and young adults. ${missionFocus}` },
       { q: 'What are the requirements?', a: 'Clients must be at least 18 years of age, must have acceptable insurance, and must be willing to live with other residents. We accept ID/DD Waivers.' },
-      { q: 'What is the home like?', a: `${homeIntro}. ${homeFeatureSentence}` }
+      { q: 'What is the home like?', a: `${homeIntro}. ${homeFeatureSentence}` },
+      waiverFaq,
+      { q: 'Where is the group home?', a: `${business.address}. We serve North Chesterfield, Chesterfield County, and the Richmond, VA area.` },
+      tourFaq
     ]
   },
   'community-engagement': {
     title: 'Community Engagement',
     eyebrow: 'Hours: 9am–3pm',
-    metaTitle: 'Community Engagement, 9am–3pm, North Chesterfield, VA | Beyon Vital, LLC',
+    metaTitle: 'Community Engagement 9am–3pm, North Chesterfield, VA',
     metaDescription:
-      'Community Engagement from Beyon Vital, LLC: a service similar to day support for individuals, 9am–3pm, with community outings, volunteer work, and life coaching.',
+      'Community Engagement in North Chesterfield, VA: a service similar to day support, 9am–3pm, with community outings, volunteer work, and life coaching.',
     summary: 'A service similar to day support for individuals, 9am–3pm, with community outings, volunteer work, and life coaching.',
     bullets: ['Community outings', 'Volunteer work', 'Life coaching', 'Hours: 9am–3pm'],
     image: peopleImages.communityOuting,
@@ -160,6 +188,7 @@ export const servicePages: Record<ServiceSlug, ServicePage> = {
       { q: 'What is Community Engagement?', a: 'Community Engagement is a service similar to day support for individuals.' },
       { q: 'What are the hours?', a: 'Community Engagement runs from 9am to 3pm.' },
       { q: 'What does it include?', a: 'Community outings, volunteer work, and life coaching.' },
+      { q: 'Where is Community Engagement offered?', a: 'Community Engagement is offered from our North Chesterfield, VA location at 8120 Clovertree Ct.' },
       { q: 'How do I ask about Community Engagement?', a: `Submit a Community Engagement inquiry online or call ${business.phone}.` }
     ]
   }
@@ -176,6 +205,7 @@ type LocationPage = {
   summary: string;
   body: string[];
   feature: 'photo' | 'requirements' | 'values';
+  faqs: Faq[];
 };
 
 export const locationPages: Record<LocationSlug, LocationPage> = {
@@ -183,37 +213,71 @@ export const locationPages: Record<LocationSlug, LocationPage> = {
     title: 'Residential Group Home in North Chesterfield, VA',
     shortName: 'North Chesterfield, VA',
     metaTitle: 'Group Home in North Chesterfield, VA | Beyon Vital, LLC',
-    metaDescription: 'Beyon Vital, LLC is located at 8120 Clovertree Ct, North Chesterfield, VA 23235: a residential group home for mature and young adults plus Community Engagement, 9am–3pm.',
+    metaDescription: 'Beyon Vital, LLC is at 8120 Clovertree Ct, North Chesterfield, VA 23235: a residential group home for mature and young adults plus Community Engagement 9am–3pm.',
     summary: `Beyon Vital, LLC is located at ${business.address}, where our residential group home offers a safe and comfortable environment for mature and young adults.`,
     body: [
       homeFeatureSentence,
       'From the same North Chesterfield location we also offer Community Engagement, a service similar to day support for individuals, from 9am to 3pm, with community outings, volunteer work, and life coaching.'
     ],
-    feature: 'photo'
+    feature: 'photo',
+    faqs: [
+      { q: 'Where is the Beyon Vital group home in North Chesterfield?', a: `${business.address}.` },
+      bedsFaq,
+      waiverFaq,
+      {
+        q: 'Is Community Engagement offered in North Chesterfield?',
+        a: 'Yes. From the same North Chesterfield location we also offer Community Engagement, a service similar to day support for individuals, from 9am to 3pm.'
+      }
+    ]
   },
   'chesterfield-county-va': {
     title: 'Group Home and Community Engagement for Chesterfield County, VA',
     shortName: 'Chesterfield County, VA',
-    metaTitle: 'Adult Group Home for Chesterfield County, VA | Beyon Vital, LLC',
+    metaTitle: 'Adult Group Home for Chesterfield County, VA | Beyon Vital',
     metaDescription: 'Therapeutic, behavioral, and psycho-educational services for mature and young adults in Chesterfield County, VA, from Beyon Vital, LLC in North Chesterfield.',
-    summary: 'For individuals and families in Chesterfield County looking for therapeutic, behavioral, and psycho-educational services for mature and young adults.',
+    summary:
+      'Beyon Vital, LLC serves Chesterfield County, VA, from our residential group home in North Chesterfield: therapeutic, behavioral, and psycho-educational support for mature and young adults. We accept ID/DD Waivers.',
     body: [
       'Our residential group home is in North Chesterfield. To ensure the comfort of staff and potential residents, clients must meet the criteria below before moving in.',
       'Our goal is to improve the lives of our clients and for our clients to receive memorable care from our team.'
     ],
-    feature: 'requirements'
+    feature: 'requirements',
+    faqs: [
+      {
+        q: 'Does Beyon Vital serve Chesterfield County?',
+        a: 'Yes. Our residential group home is in North Chesterfield, and we serve individuals and families in Chesterfield County, VA.'
+      },
+      {
+        q: 'Who can live at the group home?',
+        a: 'Mature and young adults who are at least 18 years of age, have acceptable insurance, and are willing to live with other residents. We accept ID/DD Waivers.'
+      },
+      {
+        q: 'How do I start an inquiry?',
+        a: `Send an inquiry through this website or call ${business.phone}. Please do not include medical details in online forms.`
+      }
+    ]
   },
   'richmond-va': {
     title: 'Adult Group Home Serving the Richmond, VA Area',
     shortName: 'Richmond, VA',
     metaTitle: 'Adult Group Home Near Richmond, VA | Beyon Vital, LLC',
     metaDescription: 'Beyon Vital, LLC serves the Richmond, VA area from North Chesterfield with a residential group home and Community Engagement for mature and young adults.',
-    summary: 'Beyon Vital, LLC serves the Richmond area from our home in North Chesterfield, VA.',
+    summary:
+      'Beyon Vital, LLC serves the Richmond, VA area from our residential group home in North Chesterfield: a home for mature and young adults with therapeutic, behavioral, and psycho-educational support, plus Community Engagement 9am–3pm.',
     body: [
       missionFocus,
       'Beyon Vital, LLC is to bring positivity and remarkable services into our clients lives despite their challenges.'
     ],
-    feature: 'values'
+    feature: 'values',
+    faqs: [
+      { q: 'Does Beyon Vital serve the Richmond area?', a: `Yes. We serve the Richmond, VA area from our home at ${business.address}.` },
+      {
+        q: 'What services does Beyon Vital offer near Richmond?',
+        a: 'A residential group home with therapeutic, behavioral, and psycho-educational support for mature and young adults, and Community Engagement, a service similar to day support for individuals, from 9am to 3pm.'
+      },
+      waiverFaq,
+      tourFaq
+    ]
   }
 };
 
@@ -231,7 +295,11 @@ export const faqs: Faq[] = [
     q: 'Which insurance is acceptable?',
     a: `Clients must have acceptable insurance. Please call ${business.phone} to ask about your coverage.`
   },
+  waiverFaq,
   { q: 'What is the home like?', a: `${homeIntro}. ${homeFeatureSentence}` },
+  bedsFaq,
+  areasFaq,
+  tourFaq,
   { q: 'What does Community Engagement include?', a: 'Community outings, volunteer work, and life coaching, from 9am to 3pm.' },
   { q: 'Where are you located?', a: `${business.address}.` },
   {

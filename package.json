@@ -11,7 +11,8 @@
     "email:sanity": "node scripts/sanity-blast-skip.mjs",
     "generate:brand": "python3 scripts/generate-brand-assets.py",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test scripts/inbox.test.ts"
+    "test": "tsx --test scripts/inbox.test.ts scripts/seo.test.ts",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

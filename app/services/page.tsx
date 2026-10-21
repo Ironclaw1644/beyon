@@ -6,10 +6,10 @@ import { IllustrativeImage } from '@/components/illustrative-image';
 import { servicePages, serviceSlugs } from '@/lib/content';
 
 export const metadata = buildMetadata({
-  title: 'Services: Residential Group Home & Community Engagement | Beyon Vital, LLC',
+  title: 'Group Home & Community Engagement in Chesterfield, VA',
   path: '/services',
   description:
-    'Beyon Vital, LLC offers a residential group home with therapeutic, behavioral, and psycho-educational support for mature and young adults, and Community Engagement from 9am–3pm.'
+    'Beyon Vital offers a residential group home for mature and young adults and Community Engagement (9am–3pm) in North Chesterfield, VA. We accept ID/DD Waivers.'
 });
 
 export default function ServicesPage() {

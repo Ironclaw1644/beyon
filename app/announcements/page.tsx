@@ -5,9 +5,9 @@ import { AnnouncementList } from '@/components/announcement-list';
 import { getAnnouncements } from '@/lib/announcements';
 
 export const metadata = buildMetadata({
-  title: 'Announcements | Beyon Vital, LLC',
+  title: 'Announcements | Beyon Vital Group Home, North Chesterfield',
   path: '/announcements',
-  description: 'Public updates and notices from Beyon Vital, LLC in North Chesterfield, VA.'
+  description: 'News and public notices from Beyon Vital, LLC, a residential group home with Community Engagement (9am–3pm) in North Chesterfield, VA, serving the Richmond area.'
 });
 export const dynamic = 'force-dynamic';
 

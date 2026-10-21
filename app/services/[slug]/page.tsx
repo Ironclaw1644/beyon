@@ -7,6 +7,8 @@ import {
   homeFeatures,
   homeIntro,
   homePhotos,
+  locationPages,
+  locationSlugs,
   missionFocus,
   peopleImages,
   requirements,
@@ -15,7 +17,8 @@ import {
   serviceSlugs,
   type ServiceSlug
 } from '@/lib/content';
-import { buildMetadata, serviceJsonLd } from '@/lib/site';
+import Link from 'next/link';
+import { buildMetadata, faqJsonLd, serviceJsonLd } from '@/lib/site';
 import { PageHero } from '@/components/page-hero';
 import { Section, Card, Button } from '@/components/ui';
 import { FaqList } from '@/components/faq-list';
@@ -50,6 +53,7 @@ export default async function ServiceLandingPage({ params }: { params: Promise<{
   return (
     <>
       <StructuredData data={serviceJsonLd(slug)} />
+      <StructuredData data={faqJsonLd(page.faqs)} />
       <PageHero
         eyebrow={page.eyebrow}
         title={page.title}
@@ -66,6 +70,25 @@ export default async function ServiceLandingPage({ params }: { params: Promise<{
       {slug === 'residential-group-home' ? <ResidentialDetails /> : <CommunityEngagementDetails />}
       <Section title={`${page.title} questions`}>
         <FaqList items={page.faqs} />
+      </Section>
+      <Section title="Areas we serve" description={`From our home at ${business.address}.`}>
+        <ul className="flex flex-wrap gap-3 text-sm">
+          {locationSlugs.map((area) => (
+            <li key={area}>
+              <Link href={`/locations/${area}`} className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">
+                {locationPages[area].shortName}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link href={slug === 'residential-group-home' ? '/services/community-engagement' : '/services/residential-group-home'} className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">
+              {slug === 'residential-group-home' ? 'Community Engagement' : 'Residential Group Home'}
+            </Link>
+          </li>
+          <li>
+            <Link href="/faq" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">All FAQs</Link>
+          </li>
+        </ul>
       </Section>
     </>
   );

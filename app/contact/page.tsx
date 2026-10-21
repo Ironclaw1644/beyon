@@ -6,7 +6,7 @@ import { Section, Card } from '@/components/ui';
 import { CONTACT_TIME_OPTIONS, NO_MEDICAL_NOTICE, contactSummaryFields, noteField, subscribeField } from '@/lib/inquiry-fields';
 
 export const metadata = buildMetadata({
-  title: 'Contact Beyon Vital, LLC | (804) 366-3442 | North Chesterfield, VA',
+  title: 'Contact Beyon Vital | Group Home, North Chesterfield, VA',
   path: '/contact',
   description: 'Call (804) 366-3442, email beyonvitalllc@gmail.com, or send a message to Beyon Vital, LLC at 8120 Clovertree Ct, North Chesterfield, VA 23235.'
 });

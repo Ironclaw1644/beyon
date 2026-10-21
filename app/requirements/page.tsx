@@ -5,7 +5,7 @@ import { Reveal } from '@/components/reveal';
 import { business, requirements, requirementsIntro } from '@/lib/content';
 
 export const metadata = buildMetadata({
-  title: 'Group Home Requirements | Beyon Vital, LLC',
+  title: 'Group Home Requirements: 18+, ID/DD Waivers | Beyon Vital',
   path: '/requirements',
   description: 'To live at the Beyon Vital group home, clients must be at least 18 years of age, have acceptable insurance, and be willing to live with other residents.'
 });

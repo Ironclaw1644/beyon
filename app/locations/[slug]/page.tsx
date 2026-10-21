@@ -15,7 +15,9 @@ import {
   serviceSlugs,
   type LocationSlug
 } from '@/lib/content';
-import { buildMetadata } from '@/lib/site';
+import { buildMetadata, faqJsonLd } from '@/lib/site';
+import { FaqList } from '@/components/faq-list';
+import { StructuredData } from '@/components/structured-data';
 import { PageHero } from '@/components/page-hero';
 import { Section, Card, Button } from '@/components/ui';
 
@@ -44,6 +46,7 @@ export default async function LocationLandingPage({ params }: { params: Promise<
 
   return (
     <>
+      <StructuredData data={faqJsonLd(page.faqs)} />
       <PageHero
         title={page.title}
         description={page.summary}
@@ -117,9 +120,18 @@ export default async function LocationLandingPage({ params }: { params: Promise<
                   <Link href={`/locations/${area}`} className="font-semibold text-brand-primary hover:text-brand-primary-dark">{locationPages[area].shortName}</Link>
                 </li>
               ))}
+              <li>
+                <Link href="/requirements" className="font-semibold text-brand-primary hover:text-brand-primary-dark">Requirements</Link>
+              </li>
+              <li>
+                <Link href="/our-home" className="font-semibold text-brand-primary hover:text-brand-primary-dark">Our Home</Link>
+              </li>
             </ul>
           </Card>
         </div>
+      </Section>
+      <Section title={`Questions from ${page.shortName}`}>
+        <FaqList items={page.faqs} />
       </Section>
     </>
   );

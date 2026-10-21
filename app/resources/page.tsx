@@ -6,7 +6,7 @@ import { business, communityEngagement, requirements } from '@/lib/content';
 import { NO_MEDICAL_NOTICE } from '@/lib/inquiry-fields';
 
 export const metadata = buildMetadata({
-  title: 'Resources: Getting Started | Beyon Vital, LLC',
+  title: 'Resources: Getting Started | Beyon Vital, Chesterfield VA',
   path: '/resources',
   description: 'How to get started with Beyon Vital, LLC: check the group home requirements, choose a service, and reach out without sharing medical details online.'
 });
