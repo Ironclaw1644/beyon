@@ -113,7 +113,7 @@ export default async function LocationLandingPage({ params }: { params: Promise<
             </Card>
           ))}
           <Card>
-            <h3 className="font-semibold text-brand-ink">Other service areas</h3>
+            <h3 className="font-semibold text-brand-ink">Other areas and pages</h3>
             <ul className="mt-3 space-y-2 text-sm">
               {otherAreas.map((area) => (
                 <li key={area}>

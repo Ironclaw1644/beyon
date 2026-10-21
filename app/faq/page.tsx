@@ -8,7 +8,7 @@ import { faqs } from '@/lib/content';
 export const metadata = buildMetadata({
   title: 'Group Home FAQ: Requirements, Waivers & Hours | Beyon Vital',
   path: '/faq',
-  description: 'Answers about the Beyon Vital group home in North Chesterfield, VA: who we serve, requirements, ID/DD Waivers, the home, Community Engagement hours, and contact.'
+  description: 'Answers about Beyon Vital’s group home in North Chesterfield, VA: who we serve, requirements, ID/DD Waivers, the home, Community Engagement hours, and contact.'
 });
 
 export default function FaqPage() {

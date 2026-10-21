@@ -9,7 +9,7 @@ import { CONTACT_TIME_OPTIONS, NO_MEDICAL_NOTICE, WHO_FOR_OPTIONS, contactSummar
 export const metadata = buildMetadata({
   title: 'Tour Our Group Home in North Chesterfield, VA | Beyon Vital',
   path: '/tour',
-  description: 'Request a tour of the Beyon Vital residential group home in North Chesterfield, VA. Share a few days and times that work for you, and we will follow up to schedule.'
+  description: 'Request a tour of the Beyon Vital group home in North Chesterfield, VA. Share a few days and times that work for you, and we will follow up to schedule.'
 });
 
 export default function TourPage() {

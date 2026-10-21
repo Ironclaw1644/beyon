@@ -3,7 +3,7 @@ import { business, communityEngagement, homePhotos, locationPages, locationSlugs
 import { absoluteUrl } from '@/lib/utils';
 
 export const defaultDescription =
-  'Beyon Vital Residential Group Home in North Chesterfield, VA: a 4-bed home for mature and young adults with therapeutic, behavioral, and psycho-educational support.';
+  'Beyon Vital is a 4-bed group home in North Chesterfield, VA, for mature and young adults with therapeutic, behavioral, and psycho-educational support.';
 
 export const OG_IMAGE = {
   path: '/brand/og-image.png',

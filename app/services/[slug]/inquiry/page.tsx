@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (slug !== 'community-engagement') return {};
   return buildMetadata({
     title: 'Community Engagement Inquiry, Chesterfield VA | Beyon Vital',
-    description: `Ask Beyon Vital, LLC about Community Engagement (${communityEngagement.hours}) in North Chesterfield, VA: community outings, volunteer work, and life coaching. Or call ${business.phone}.`,
+    description: `Ask Beyon Vital about Community Engagement (${communityEngagement.hours}) in North Chesterfield, VA: community outings, volunteer work, and life coaching. Or call ${business.phone}.`,
     path: `/services/${slug}/inquiry`
   });
 }
