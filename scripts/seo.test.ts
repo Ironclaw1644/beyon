@@ -8,6 +8,7 @@ import { classifySource } from '../lib/source';
 import { locationPages, locationSlugs, servicePages, serviceSlugs } from '../lib/content';
 import { llmsTxt } from '../lib/seo/llms';
 
+import { guides, guidesFor, guideLinksFor } from '../lib/guides';
 test('uule matches Google tokens already verified on Bond & Fifth', () => {
   assert.equal(uuleFor('Miami,Florida,United States'), 'w+CAIQICIbTWlhbWksRmxvcmlkYSxVbml0ZWQgU3RhdGVz');
   assert.equal(uuleFor('Atlanta,Georgia,United States'), 'w+CAIQICIdQXRsYW50YSxHZW9yZ2lhLFVuaXRlZCBTdGF0ZXM=');
@@ -96,4 +97,26 @@ test('llms.txt carries the sourced facts and nothing the claims register rules o
   for (const banned of [/licen[sc]/i, /24\/7|around the clock|overnight/i, /medicaid/i, /years of experience/i, /testimonial/i]) {
     assert.doesNotMatch(text, banned);
   }
+});
+
+test('guides: meta lengths, official sources, links resolve, no unsourced Beyon claims', () => {
+  const slugs = new Set(guides.map((g) => g.slug));
+  assert.equal(slugs.size, guides.length, 'duplicate guide slug');
+  const official = /^https:\/\/(law\.lis\.virginia\.gov|www\.dmas\.virginia\.gov|dbhds\.virginia\.gov|www\.dss\.virginia\.gov|vacsb\.org|www\.chesterfield\.gov)\//;
+  for (const g of guides) {
+    assert.ok(g.metaTitle.length <= 60, `${g.metaTitle} (${g.metaTitle.length})`);
+    assert.ok(g.metaDescription.length >= 140 && g.metaDescription.length <= 160, `${g.slug} desc ${g.metaDescription.length}`);
+    assert.ok(g.sources.length >= 2, `${g.slug} needs sources`);
+    for (const s of g.sources) assert.match(s.url, official, `${g.slug}: ${s.url}`);
+    for (const r of g.related) assert.ok(slugs.has(r), `${g.slug} related ${r}`);
+    assert.ok(g.moneyLinks.length >= 1, `${g.slug} needs a money link`);
+    // What we say about Beyon Vital itself stays inside docs/claims.md.
+    for (const banned of [/licen[sc]/i, /24\/7|around the clock|overnight/i, /medicaid/i, /years of experience/i, /\$\d/, /certified|credential/i]) {
+      assert.doesNotMatch(g.atBeyon, banned, `${g.slug} atBeyon`);
+    }
+  }
+  for (const path of Object.keys(guidesFor)) assert.ok(guideLinksFor(path).length > 0);
+  // Every guide is linked from the home page and the FAQ hub.
+  assert.deepEqual(new Set(guidesFor['/']), slugs);
+  assert.deepEqual(new Set(guidesFor['/faq']), slugs);
 });

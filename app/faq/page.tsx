@@ -4,6 +4,8 @@ import { Section, Button } from '@/components/ui';
 import { FaqList } from '@/components/faq-list';
 import { StructuredData } from '@/components/structured-data';
 import { faqs } from '@/lib/content';
+import { GuideLinksSection } from '@/components/guide-links';
+import Link from 'next/link';
 
 export const metadata = buildMetadata({
   title: 'Group Home FAQ: Requirements, Waivers & Hours | Beyon Vital',
@@ -26,7 +28,12 @@ export default function FaqPage() {
           <Button href="/contact">Contact Us</Button>
           <Button href="/placement-inquiry" variant="ghost" trackCta="placement-inquiry">Start an Inquiry</Button>
         </div>
+        <p className="mt-6 text-sm text-brand-muted">
+          Using an ID/DD Waiver? See{' '}
+          <Link href="/dd-waiver-group-home-richmond-va" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">our ID/DD waiver group home near Richmond</Link>.
+        </p>
       </Section>
+      <GuideLinksSection path="/faq" title="In-depth answers" />
     </>
   );
 }

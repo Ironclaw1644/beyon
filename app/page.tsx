@@ -7,6 +7,7 @@ import { PhotoGrid } from '@/components/photo-grid';
 import { IllustrativeImage } from '@/components/illustrative-image';
 import { getAnnouncements } from '@/lib/announcements';
 import { buildMetadata } from '@/lib/site';
+import { GuideLinksSection } from '@/components/guide-links';
 import { answerSummary, business, coreValues, homeFeatures, homeIntro, homePhotos, locationPages, locationSlugs, mission, peopleImages, servicePages, serviceSlugs, vision } from '@/lib/content';
 
 export const metadata = buildMetadata({
@@ -110,10 +111,13 @@ export default async function HomePage() {
           ))}
         </ul>
         <p className="mt-6 text-sm text-brand-muted">
-          Questions about requirements or ID/DD Waivers? See our{' '}
+          Using a waiver? Read about our{' '}
+          <Link href="/dd-waiver-group-home-richmond-va" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">ID/DD waiver group home near Richmond</Link>, or see our{' '}
           <Link href="/faq" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">frequently asked questions</Link>.
         </p>
       </Section>
+
+      <GuideLinksSection path="/" />
 
       {announcements.length ? (
         <Section title="Current announcements">

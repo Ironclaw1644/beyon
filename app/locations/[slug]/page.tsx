@@ -20,6 +20,8 @@ import { FaqList } from '@/components/faq-list';
 import { StructuredData } from '@/components/structured-data';
 import { PageHero } from '@/components/page-hero';
 import { Section, Card, Button } from '@/components/ui';
+import { GuideLinksSection } from '@/components/guide-links';
+import { localAgencies } from '@/lib/local-resources';
 
 export const dynamicParams = false;
 
@@ -130,9 +132,40 @@ export default async function LocationLandingPage({ params }: { params: Promise<
           </Card>
         </div>
       </Section>
+      <LocalAgencies slug={slug} shortName={page.shortName} />
       <Section title={`Questions from ${page.shortName}`}>
         <FaqList items={page.faqs} />
       </Section>
+      <GuideLinksSection path={`/locations/${slug}`} />
     </>
+  );
+}
+
+function LocalAgencies({ slug, shortName }: { slug: LocationSlug; shortName: string }) {
+  const local = localAgencies[slug];
+  return (
+    <Section title={`DD waiver help in ${shortName}`} description={local.intro}>
+      <div className="grid gap-4 md:grid-cols-2">
+        {local.agencies.map((agency) => (
+          <Card key={agency.name} interactive={false}>
+            <h3 className="font-semibold text-brand-ink">{agency.name}</h3>
+            <p className="mt-2 text-sm leading-7 text-brand-muted">{agency.detail}</p>
+          </Card>
+        ))}
+      </div>
+      <p className="mt-6 max-w-3xl text-sm leading-7 text-brand-muted">
+        Beyon Vital accepts ID/DD Waivers. Read how a waiver can pay for{' '}
+        <Link href="/dd-waiver-group-home-richmond-va" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">an ID/DD waiver group home near Richmond</Link>.
+      </p>
+      <p className="mt-3 text-xs leading-6 text-brand-muted">
+        Sources, checked November 2, 2026:{' '}
+        {local.sources.map((source, index) => (
+          <span key={source.url}>
+            {index ? '; ' : ''}
+            <a href={source.url} className="underline hover:text-brand-ink" rel="noopener" target="_blank">{source.label}</a>
+          </span>
+        ))}
+      </p>
+    </Section>
   );
 }

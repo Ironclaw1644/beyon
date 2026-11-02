@@ -2,6 +2,7 @@ import { buildMetadata } from '@/lib/site';
 import { PageHero } from '@/components/page-hero';
 import { Section, Card, Button } from '@/components/ui';
 import { Reveal } from '@/components/reveal';
+import { GuideLinksSection } from '@/components/guide-links';
 import { business, requirements, requirementsIntro } from '@/lib/content';
 
 export const metadata = buildMetadata({
@@ -14,7 +15,7 @@ export default function RequirementsPage() {
   return (
     <>
       <PageHero
-        title="Requirements"
+        title="Group Home Requirements"
         description={requirementsIntro}
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Requirements', href: '/requirements' }]}
         actions={<Button href="/placement-inquiry" trackCta="placement-inquiry">Start an Inquiry</Button>}
@@ -38,8 +39,10 @@ export default function RequirementsPage() {
         <div className="flex flex-wrap gap-3">
           <Button href={business.phoneHref} trackCta="call">Call {business.phone}</Button>
           <Button href="/faq" variant="ghost">Read the FAQ</Button>
+          <Button href="/dd-waiver-group-home-richmond-va" variant="ghost">Using an ID/DD Waiver</Button>
         </div>
       </Section>
+      <GuideLinksSection path="/requirements" />
     </>
   );
 }

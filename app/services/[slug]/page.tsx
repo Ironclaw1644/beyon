@@ -26,6 +26,7 @@ import { Reveal } from '@/components/reveal';
 import { PhotoGrid } from '@/components/photo-grid';
 import { IllustrativeImage } from '@/components/illustrative-image';
 import { StructuredData } from '@/components/structured-data';
+import { GuideLinksSection } from '@/components/guide-links';
 
 export const dynamicParams = false;
 
@@ -56,7 +57,7 @@ export default async function ServiceLandingPage({ params }: { params: Promise<{
       <StructuredData data={faqJsonLd(page.faqs)} />
       <PageHero
         eyebrow={page.eyebrow}
-        title={page.title}
+        title={page.h1 ?? page.title}
         description={page.summary}
         image={page.image}
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Services', href: '/services' }, { label: page.title, href: path }]}
@@ -71,6 +72,7 @@ export default async function ServiceLandingPage({ params }: { params: Promise<{
       <Section title={`${page.title} questions`}>
         <FaqList items={page.faqs} />
       </Section>
+      <GuideLinksSection path={path} />
       <Section title="Areas we serve" description={`From our home at ${business.address}.`}>
         <ul className="flex flex-wrap gap-3 text-sm">
           {locationSlugs.map((area) => (
@@ -84,6 +86,9 @@ export default async function ServiceLandingPage({ params }: { params: Promise<{
             <Link href={slug === 'residential-group-home' ? '/services/community-engagement' : '/services/residential-group-home'} className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">
               {slug === 'residential-group-home' ? 'Community Engagement' : 'Residential Group Home'}
             </Link>
+          </li>
+          <li>
+            <Link href="/dd-waiver-group-home-richmond-va" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">ID/DD waiver group home near Richmond</Link>
           </li>
           <li>
             <Link href="/faq" className="font-semibold text-brand-primary underline hover:text-brand-primary-dark">All FAQs</Link>

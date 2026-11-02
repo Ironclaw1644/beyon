@@ -4,6 +4,7 @@ import { PageHero } from '@/components/page-hero';
 import { Section, Card } from '@/components/ui';
 import { business, communityEngagement, requirements } from '@/lib/content';
 import { NO_MEDICAL_NOTICE } from '@/lib/inquiry-fields';
+import { GuideLinksSection } from '@/components/guide-links';
 
 export const metadata = buildMetadata({
   title: 'Resources: Getting Started | Beyon Vital, Chesterfield VA',
@@ -38,6 +39,7 @@ export default function ResourcesPage() {
               <ul className="mt-3 space-y-2 text-sm text-brand-muted">
                 <li>• <Link href="/services/residential-group-home" className={linkClass}>Residential Group Home</Link></li>
                 <li>• <Link href="/services/community-engagement" className={linkClass}>Community Engagement</Link> ({communityEngagement.hours})</li>
+                <li>• <Link href="/dd-waiver-group-home-richmond-va" className={linkClass}>ID/DD Waiver Group Home</Link></li>
               </ul>
             </Card>
           </li>
@@ -49,6 +51,7 @@ export default function ResourcesPage() {
           </li>
         </ol>
       </Section>
+      <GuideLinksSection path="/resources" />
       <Section title="Ways to reach us">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>

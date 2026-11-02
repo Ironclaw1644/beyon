@@ -106,6 +106,7 @@ export const navLinks = [
 export const footerLinks = [
   { href: '/services/residential-group-home', label: 'Residential Group Home' },
   { href: '/services/community-engagement', label: 'Community Engagement' },
+  { href: '/dd-waiver-group-home-richmond-va', label: 'ID/DD Waiver Group Home' },
   { href: '/our-home', label: 'Our Home' },
   { href: '/requirements', label: 'Requirements' },
   { href: '/resources', label: 'Resources' },
@@ -138,6 +139,8 @@ const tourFaq: Faq = {
 
 type ServicePage = {
   title: string;
+  /** Page H1; keyword-first. Falls back to title. */
+  h1?: string;
   eyebrow: string;
   metaTitle: string;
   metaDescription: string;
@@ -153,6 +156,7 @@ type ServicePage = {
 export const servicePages: Record<ServiceSlug, ServicePage> = {
   'residential-group-home': {
     title: 'Residential Group Home',
+    h1: 'Residential Group Home for Adults',
     eyebrow: 'Therapeutic · Behavioral · Psycho-educational',
     metaTitle: 'Residential Group Home, North Chesterfield, VA | Beyon Vital',
     metaDescription:
@@ -174,10 +178,11 @@ export const servicePages: Record<ServiceSlug, ServicePage> = {
   },
   'community-engagement': {
     title: 'Community Engagement',
+    h1: 'Community Engagement, Similar to Day Support',
     eyebrow: 'Hours: 9am–3pm',
-    metaTitle: 'Community Engagement 9am–3pm, North Chesterfield, VA',
+    metaTitle: 'Day Support-Style Community Engagement | Chesterfield, VA',
     metaDescription:
-      'Community Engagement in North Chesterfield, VA: a service similar to day support, 9am–3pm, with community outings, volunteer work, and life coaching.',
+      'Community Engagement in North Chesterfield, VA, similar to day support for individuals: 9am–3pm, with community outings, volunteer work and life coaching.',
     summary: 'A service similar to day support for individuals, 9am–3pm, with community outings, volunteer work, and life coaching.',
     bullets: ['Community outings', 'Volunteer work', 'Life coaching', 'Hours: 9am–3pm'],
     image: peopleImages.communityOuting,
@@ -231,7 +236,7 @@ export const locationPages: Record<LocationSlug, LocationPage> = {
     ]
   },
   'chesterfield-county-va': {
-    title: 'Group Home and Community Engagement for Chesterfield County, VA',
+    title: 'Adult Group Home in Chesterfield County, VA',
     shortName: 'Chesterfield County, VA',
     metaTitle: 'Adult Group Home for Chesterfield County, VA | Beyon Vital',
     metaDescription: 'Therapeutic, behavioral, and psycho-educational services for mature and young adults in Chesterfield County, VA, from Beyon Vital, LLC in North Chesterfield.',

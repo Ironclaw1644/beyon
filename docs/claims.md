@@ -89,6 +89,23 @@ No new facts. These surfaces only recombine claims sourced above:
 
 `scripts/seo.test.ts` fails if `/llms.txt` mentions licensure, round-the-clock care, Medicaid, years of experience, or testimonials.
 
+## Family guides, waiver page and local agencies (2026-11-02)
+
+No new facts about Beyon Vital. These surfaces add **public facts about Virginia rules and agencies**, each tied to an official source read on 2026-11-02 and listed on the page:
+
+| Surface | What it says about Beyon Vital | Public facts and sources |
+| --- | --- | --- |
+| `/faq/<slug>` guides (8, data in `lib/guides.ts`) | `atBeyon` box only: name, address, phone, residential group home, 4 beds / 3 bedrooms / home features, 18+, acceptable insurance, live with other residents, "We accept ID/DD Waivers", Community Engagement "similar to day support", 9am–3pm, outings / volunteer work / life coaching | 12VAC30-122-30/-240/-250/-260/-310/-320/-380/-390/-530, 12VAC35-105-20, Code of Va. § 63.2-100, 22VAC30-120-10 (law.lis.virginia.gov); DMAS DD Waivers page; DBHDS Service Selection Guide (11.19.25) and Navigating the DD Waivers; DSS assisted living page; VACSB directory; Chesterfield County DD Services |
+| `/dd-waiver-group-home-richmond-va` | Same Beyon facts as above (requirements, home features, address, ID/DD Waivers, Community Engagement, tour flow) | Same sources: CL waiver covers group home residential; per-day tiered payment; six-licensed-bed limit; one waiver at a time; waiting list by urgency; CSB contacts |
+| Location pages: "DD waiver help in …" block (`lib/local-resources.ts`) | "Beyon Vital accepts ID/DD Waivers" | Chesterfield CSB (804) 748-1227 and ZIP 23235 in its area (VACSB); Chesterfield DD Services 804-717-6642 (chesterfield.gov); RBHA and Henrico MHDS (VACSB) |
+
+Rules kept on these pages:
+
+- The guides describe Virginia's waiver services. They never say Beyon Vital is licensed, is an enrolled provider of a named waiver service, or that its Community Engagement is the waiver service of that name. The client's own description stays "a service similar to day support for individuals".
+- The waiver page never connects the home's 4 beds to the six-licensed-bed rule (that would imply a licensed capacity).
+- `scripts/seo.test.ts` checks every guide: title ≤60, description 140–160, ≥2 sources all on official domains, related links resolve, and the `atBeyon` text has no licensure, Medicaid, round-the-clock, price, or credential wording.
+- Re-read the sources and bump `reviewed` in `lib/guides.ts` when you edit a guide.
+
 ## Site operations (not client facts; confirm before launch)
 
 | Statement | Where | Note |
