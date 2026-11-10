@@ -77,21 +77,28 @@ export default function ResourcesPage() {
           </Card>
         </div>
       </Section>
-      <Section title="Other providers we know" description="If our home is not the right fit, or your family is looking in another state, these providers may be worth a call.">
-        <div className="grid gap-4 md:grid-cols-2">
+      <Section title="Other providers we know" description="If our home is not the right fit, your family is looking in another state, or someone needs help with alcohol or drug use, these providers may be worth a call.">
+        <div className="grid gap-4 md:grid-cols-3">
           <Card interactive={false} className="h-full">
             <h3 className="font-semibold text-brand-ink">At Home Family Services</h3>
             <p className="mt-3 text-sm leading-7 text-brand-muted">
-              An adult group home in North Chesterfield, Virginia, offering supportive living for adults 18 and over with developmental disabilities. It serves families across Chesterfield County, Richmond, Midlothian, and Colonial Heights.
+              An adult group home in North Chesterfield, Virginia, offering supportive living for adults 18 and over with intellectual and developmental disabilities. It serves families across Chesterfield County, Richmond, Midlothian, and Colonial Heights.
             </p>
-            <a href="https://athomefamilyservices.com/" className={`mt-3 inline-flex text-sm ${linkClass}`}>At Home Family Services, adult group home in North Chesterfield, VA</a>
+            <a href="https://athomefamilyservices.com/services/supportive-living-id-dd" className={`mt-3 inline-flex text-sm ${linkClass}`}>Supportive living for adults with disabilities at At Home Family Services, North Chesterfield</a>
           </Card>
           <Card interactive={false} className="h-full">
             <h3 className="font-semibold text-brand-ink">Unity Care</h3>
             <p className="mt-3 text-sm leading-7 text-brand-muted">
               Supported living, community participation, and employment supports for people with intellectual and developmental disabilities in Knoxville, Tennessee. Tennessee&rsquo;s provider directory lists it as serving Anderson, Blount, Knox, Loudon, and Sevier counties.
             </p>
-            <a href="https://unitycaretn.com/" className={`mt-3 inline-flex text-sm ${linkClass}`}>Unity Care, I/DD services in Knoxville, Tennessee</a>
+            <a href="https://unitycaretn.com/services" className={`mt-3 inline-flex text-sm ${linkClass}`}>Unity Care&rsquo;s I/DD services in Knoxville, Tennessee</a>
+          </Card>
+          <Card interactive={false} className="h-full">
+            <h3 className="font-semibold text-brand-ink">Lighthouse Rehabilitation Center</h3>
+            <p className="mt-3 text-sm leading-7 text-brand-muted">
+              A drug and alcohol rehab in Midlothian, Virginia, with a partial hospitalization program for adults. Its guide for families covers looking after yourself, learning the options, and staying in patient contact.
+            </p>
+            <a href="https://www.lighthouserhc.com/faq/how-to-help-a-family-member-with-addiction" className={`mt-3 inline-flex text-sm ${linkClass}`}>How to help a family member with addiction, from Lighthouse in Midlothian, VA</a>
           </Card>
         </div>
       </Section>
