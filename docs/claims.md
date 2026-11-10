@@ -106,6 +106,15 @@ Rules kept on these pages:
 - `scripts/seo.test.ts` checks every guide: title ≤60, description 140–160, ≥2 sources all on official domains, related links resolve, and the `atBeyon` text has no licensure, Medicaid, round-the-clock, price, or credential wording.
 - Re-read the sources and bump `reviewed` in `lib/guides.ts` when you edit a guide.
 
+## Other providers block on /resources (2026-11-09)
+
+No new facts about Beyon Vital. The "Other providers we know" section on `/resources` describes two other providers, using only what each one's own live site says (read 2026-11-09). It never calls them partners, never mentions licensure, waivers, Medicaid or payment, and never implies shared ownership or referrals.
+
+| Statement | Source |
+| --- | --- |
+| At Home Family Services: adult group home in North Chesterfield, VA; supportive living for adults 18+ with developmental disabilities; serves Chesterfield County, Richmond, Midlothian and Colonial Heights | athomefamilyservices.com home page (H1 and hero text) |
+| Unity Care: supported living, community participation and employment supports for people with intellectual and developmental disabilities in Knoxville, TN; the Tennessee provider directory lists it for Anderson, Blount, Knox, Loudon and Sevier counties | unitycaretn.com home and services pages (served from the Vercel project `unitycare-site`) |
+
 ## Site operations (not client facts; confirm before launch)
 
 | Statement | Where | Note |

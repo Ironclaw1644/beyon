@@ -7,10 +7,11 @@ import { guidePath, guides } from '@/lib/guides';
 // changes; a build-time date on every URL tells crawlers nothing.
 const CONTENT_UPDATED = '2026-10-21';
 const SEO_1102 = '2026-11-02';
+const CROSSLINKS_1109 = '2026-11-09';
 const UPDATED: Record<string, string> = {
   '/': SEO_1102,
   '/faq': SEO_1102,
-  '/resources': SEO_1102,
+  '/resources': CROSSLINKS_1109,
   '/requirements': SEO_1102,
   '/services/residential-group-home': SEO_1102,
   '/services/community-engagement': SEO_1102,

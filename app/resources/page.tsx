@@ -77,6 +77,24 @@ export default function ResourcesPage() {
           </Card>
         </div>
       </Section>
+      <Section title="Other providers we know" description="If our home is not the right fit, or your family is looking in another state, these providers may be worth a call.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card interactive={false} className="h-full">
+            <h3 className="font-semibold text-brand-ink">At Home Family Services</h3>
+            <p className="mt-3 text-sm leading-7 text-brand-muted">
+              An adult group home in North Chesterfield, Virginia, offering supportive living for adults 18 and over with developmental disabilities. It serves families across Chesterfield County, Richmond, Midlothian, and Colonial Heights.
+            </p>
+            <a href="https://athomefamilyservices.com/" className={`mt-3 inline-flex text-sm ${linkClass}`}>At Home Family Services, adult group home in North Chesterfield, VA</a>
+          </Card>
+          <Card interactive={false} className="h-full">
+            <h3 className="font-semibold text-brand-ink">Unity Care</h3>
+            <p className="mt-3 text-sm leading-7 text-brand-muted">
+              Supported living, community participation, and employment supports for people with intellectual and developmental disabilities in Knoxville, Tennessee. Tennessee&rsquo;s provider directory lists it as serving Anderson, Blount, Knox, Loudon, and Sevier counties.
+            </p>
+            <a href="https://unitycaretn.com/" className={`mt-3 inline-flex text-sm ${linkClass}`}>Unity Care, I/DD services in Knoxville, Tennessee</a>
+          </Card>
+        </div>
+      </Section>
     </>
   );
 }
